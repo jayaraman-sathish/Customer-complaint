@@ -1,0 +1,458 @@
+<title>Complaint Desk Flow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+:root{
+  --ground:#E7ECEE; --surface:#FFFFFF; --surface-2:#F1F5F6; --surface-3:#E2E9EB;
+  --line:#C7D3D8; --line-2:#DCE4E7;
+  --ink:#0F171B; --ink-2:#3E4F57; --ink-3:#6D8089;
+  --copper:#A2542A; --copper-wash:#F3E6DC;
+  --ok:#1C7A5B; --ok-wash:#DDF0E8;
+  --warn:#9C6607; --warn-wash:#F7ECD5;
+  --crit:#AC3125; --crit-wash:#F8E0DC;
+  --info:#2E5E80; --info-wash:#E0EAF1;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --ground:#0C1215; --surface:#151E22; --surface-2:#1B262B; --surface-3:#222F35;
+  --line:#2C3A41; --line-2:#232F35;
+  --ink:#E1EAED; --ink-2:#A7B9C0; --ink-3:#7A8D95;
+  --copper:#DB8853; --copper-wash:#2D1C12;
+  --ok:#4FC095; --ok-wash:#0F2A20;
+  --warn:#DCA745; --warn-wash:#2A2010;
+  --crit:#E5735F; --crit-wash:#2D1512;
+  --info:#79ADD3; --info-wash:#14252F;
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --ground:#0C1215; --surface:#151E22; --surface-2:#1B262B; --surface-3:#222F35;
+  --line:#2C3A41; --line-2:#232F35;
+  --ink:#E1EAED; --ink-2:#A7B9C0; --ink-3:#7A8D95;
+  --copper:#DB8853; --copper-wash:#2D1C12;
+  --ok:#4FC095; --ok-wash:#0F2A20;
+  --warn:#DCA745; --warn-wash:#2A2010;
+  --crit:#E5735F; --crit-wash:#2D1512;
+  --info:#79ADD3; --info-wash:#14252F;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);
+  font-family:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  font-size:15px;line-height:1.62;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:Archivo,"IBM Plex Sans",system-ui,sans-serif;margin:0;text-wrap:balance;letter-spacing:-.018em}
+.mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace;font-variant-numeric:tabular-nums}
+:focus-visible{outline:2px solid var(--copper);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+.wrap{max-width:900px;margin:0 auto;padding:44px 22px 80px;display:flex;flex-direction:column;gap:38px}
+header{display:flex;flex-direction:column;gap:10px;padding-bottom:26px;border-bottom:2px solid var(--ink)}
+.eyebrow{font-family:Archivo,sans-serif;font-size:10.5px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--copper)}
+h1{font-size:clamp(28px,4.4vw,40px);line-height:1.08}
+.lede{font-size:16.5px;color:var(--ink-2);max-width:62ch}
+.meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+.tag{font-size:11.5px;border:1px solid var(--line);background:var(--surface);border-radius:20px;padding:3px 11px;color:var(--ink-2)}
+
+section{display:flex;flex-direction:column;gap:16px}
+.snum{display:flex;align-items:baseline;gap:12px}
+.snum b{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--copper);font-weight:500}
+h2{font-size:22px}
+h3{font-size:15.5px;margin-top:6px}
+p{margin:0;max-width:66ch}
+.note{font-size:13.5px;color:var(--ink-3);max-width:66ch}
+
+figure{margin:0;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:20px 18px 14px;display:flex;flex-direction:column;gap:12px}
+.scroll{overflow-x:auto}
+figure svg{display:block;max-width:100%;height:auto;color:var(--ink);min-width:460px}
+figcaption{font-size:12.5px;color:var(--ink-3);border-top:1px solid var(--line-2);padding-top:11px;line-height:1.5}
+.dfill-a{fill:var(--surface-2)} .dfill-b{fill:var(--copper-wash)} .dfill-c{fill:var(--info-wash)} .dfill-d{fill:var(--ok-wash)}
+.dstroke{stroke:var(--line);fill:none} .dline{stroke:var(--ink-3);fill:none;stroke-width:1.3}
+.dcopper{stroke:var(--copper);fill:none;stroke-width:1.6}
+.dt{font-family:"IBM Plex Sans",sans-serif;font-size:12.5px;fill:var(--ink)}
+.dt-b{font-family:Archivo,sans-serif;font-size:13px;font-weight:600;fill:var(--ink)}
+.dt-s{font-family:"IBM Plex Sans",sans-serif;font-size:11px;fill:var(--ink-3)}
+.dt-g{font-family:"IBM Plex Mono",monospace;font-size:10.5px;fill:var(--copper)}
+.dt-r{font-family:"IBM Plex Mono",monospace;font-size:10.5px;fill:var(--crit)}
+
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:600px}
+th{text-align:left;font-family:Archivo,sans-serif;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);font-weight:600;padding:9px 12px;border-bottom:1px solid var(--line);background:var(--surface-2);white-space:nowrap}
+td{padding:10px 12px;border-bottom:1px solid var(--line-2);vertical-align:top}
+tr:last-child td{border-bottom:none}
+td.mono{font-size:12.5px}
+.yes{color:var(--ok);font-weight:600} .no{color:var(--ink-3)}
+
+.pill{display:inline-block;font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;font-family:Archivo,sans-serif;white-space:nowrap}
+.p-copper{background:var(--copper-wash);color:var(--copper)}
+.p-info{background:var(--info-wash);color:var(--info)}
+.p-warn{background:var(--warn-wash);color:var(--warn)}
+.p-ok{background:var(--ok-wash);color:var(--ok)}
+.p-crit{background:var(--crit-wash);color:var(--crit)}
+
+.gates{display:flex;flex-direction:column;gap:0;border:1px solid var(--line);border-radius:8px;background:var(--surface);overflow:hidden}
+.gate{display:grid;grid-template-columns:190px 1fr;gap:14px;padding:13px 16px;border-top:1px solid var(--line-2)}
+.gate:first-child{border-top:none}
+.gate .g1{font-family:Archivo,sans-serif;font-size:13px;font-weight:600}
+.gate .g1 span{display:block;font-family:"IBM Plex Sans",sans-serif;font-weight:400;font-size:11.5px;color:var(--ink-3);margin-top:2px}
+.gate ul{margin:0;padding-left:17px;font-size:13.5px;color:var(--ink-2)}
+.gate li{margin-bottom:3px}
+.gate li:last-child{margin-bottom:0}
+@media(max-width:620px){.gate{grid-template-columns:1fr;gap:6px}}
+
+.callout{border-left:3px solid var(--copper);background:var(--surface);padding:14px 16px;border-radius:0 8px 8px 0;font-size:14px;color:var(--ink-2)}
+.callout b{color:var(--ink)}
+footer{border-top:1px solid var(--line);padding-top:18px;font-size:12.5px;color:var(--ink-3)}
+</style>
+
+<div class="wrap">
+<header>
+  <span class="eyebrow">Audree Infotech · Phase-1 reference build</span>
+  <h1>Customer Complaint &amp; Feedback Management — application flow</h1>
+  <p class="lede">How a consumer complaint travels from an active QR on the bottle to a closed, audited case: the seven stages, who owns each one, and the conditions that must be met before a case can move on.</p>
+  <div class="meta">
+    <span class="tag">Distillery / alcobev</span>
+    <span class="tag">.NET · SQL Server</span>
+    <span class="tag">7 stages · 6 roles</span>
+    <span class="tag">RCA &amp; CAPA with review gate</span>
+  </div>
+</header>
+
+<section>
+  <div class="snum"><b>01</b><h2>Two sides of one system</h2></div>
+  <p>The consumer never sees the internal console, and internal users never fill in the consumer form. Both sit on one database, which is what makes a complaint traceable from the bottle in someone's hand to the filler head that caused it.</p>
+
+  <figure>
+    <div class="scroll">
+      <svg viewBox="0 0 900 330" role="img" aria-label="Consumer submits by QR, portal or care desk; the system issues a reference and creates a case; internal teams work it; the consumer receives acknowledgement and closure emails and can track status by reference number.">
+        <defs>
+          <marker id="a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+          </marker>
+        </defs>
+
+        <!-- lane labels -->
+        <text class="dt-s" x="10" y="26">CONSUMER</text>
+        <text class="dt-s" x="10" y="150">SYSTEM</text>
+        <text class="dt-s" x="10" y="274">INTERNAL</text>
+        <line class="dstroke" x1="0" y1="98" x2="900" y2="98" stroke-dasharray="3 4"/>
+        <line class="dstroke" x1="0" y1="222" x2="900" y2="222" stroke-dasharray="3 4"/>
+
+        <!-- consumer row -->
+        <rect class="dfill-b" x="100" y="16" width="132" height="62" rx="6"/>
+        <rect x="100" y="16" width="132" height="62" rx="6" class="dstroke"/>
+        <text class="dt-b" x="166" y="41" text-anchor="middle">Active QR</text>
+        <text class="dt-s" x="166" y="59" text-anchor="middle">portal · direct link</text>
+
+        <rect class="dfill-b" x="300" y="16" width="132" height="62" rx="6"/>
+        <rect x="300" y="16" width="132" height="62" rx="6" class="dstroke"/>
+        <text class="dt-b" x="366" y="41" text-anchor="middle">Complaint form</text>
+        <text class="dt-s" x="366" y="59" text-anchor="middle">3 steps · evidence</text>
+
+        <rect class="dfill-d" x="640" y="16" width="150" height="62" rx="6"/>
+        <rect x="640" y="16" width="150" height="62" rx="6" class="dstroke"/>
+        <text class="dt-b" x="715" y="41" text-anchor="middle">Track by reference</text>
+        <text class="dt-s" x="715" y="59" text-anchor="middle">status + outcome</text>
+
+        <!-- system row -->
+        <rect class="dfill-a" x="300" y="140" width="132" height="62" rx="6"/>
+        <rect x="300" y="140" width="132" height="62" rx="6" class="dstroke"/>
+        <text class="dt-b" x="366" y="165" text-anchor="middle">Case created</text>
+        <text class="dt-g" x="366" y="183" text-anchor="middle">CMP-2026-0019</text>
+
+        <rect class="dfill-a" x="510" y="140" width="132" height="62" rx="6"/>
+        <rect x="510" y="140" width="132" height="62" rx="6" class="dstroke"/>
+        <text class="dt-b" x="576" y="165" text-anchor="middle">SLA clock</text>
+        <text class="dt-s" x="576" y="183" text-anchor="middle">by severity</text>
+
+        <rect class="dfill-a" x="700" y="140" width="150" height="62" rx="6"/>
+        <rect x="700" y="140" width="150" height="62" rx="6" class="dstroke"/>
+        <text class="dt-b" x="775" y="165" text-anchor="middle">Email outbox</text>
+        <text class="dt-s" x="775" y="183" text-anchor="middle">ack · assign · closure</text>
+
+        <!-- internal row -->
+        <rect class="dfill-c" x="100" y="248" width="150" height="62" rx="6"/>
+        <rect x="100" y="248" width="150" height="62" rx="6" class="dstroke"/>
+        <text class="dt-b" x="175" y="273" text-anchor="middle">Customer Care</text>
+        <text class="dt-s" x="175" y="291" text-anchor="middle">classify · assign · close</text>
+
+        <rect class="dfill-c" x="320" y="248" width="150" height="62" rx="6"/>
+        <rect x="320" y="248" width="150" height="62" rx="6" class="dstroke"/>
+        <text class="dt-b" x="395" y="273" text-anchor="middle">QA/QC &amp; plant</text>
+        <text class="dt-s" x="395" y="291" text-anchor="middle">investigate · RCA · CAPA</text>
+
+        <rect class="dfill-c" x="540" y="248" width="150" height="62" rx="6"/>
+        <rect x="540" y="248" width="150" height="62" rx="6" class="dstroke"/>
+        <text class="dt-b" x="615" y="273" text-anchor="middle">QA Manager</text>
+        <text class="dt-s" x="615" y="291" text-anchor="middle">review · approve</text>
+
+        <!-- arrows -->
+        <g color="var(--ink-3)">
+          <line class="dline" x1="232" y1="47" x2="292" y2="47" marker-end="url(#a1)"/>
+          <line class="dline" x1="366" y1="78" x2="366" y2="132" marker-end="url(#a1)"/>
+          <line class="dline" x1="432" y1="171" x2="502" y2="171" marker-end="url(#a1)"/>
+          <line class="dline" x1="642" y1="171" x2="692" y2="171" marker-end="url(#a1)"/>
+          <path class="dline" d="M366 202 L366 226 L175 226 L175 240" marker-end="url(#a1)"/>
+          <line class="dline" x1="250" y1="279" x2="312" y2="279" marker-end="url(#a1)"/>
+          <line class="dline" x1="470" y1="279" x2="532" y2="279" marker-end="url(#a1)"/>
+        </g>
+        <path class="dcopper" d="M775 140 L775 92 L715 92 L715 86" marker-end="url(#a1)" color="var(--copper)"/>
+        <text class="dt-s" x="252" y="41">scan</text>
+        <text class="dt-s" x="374" y="120">submit</text>
+        <text class="dt-s" x="440" y="163">start</text>
+        <text class="dt-s" x="786" y="112">emails</text>
+      </svg>
+    </div>
+    <figcaption><b>Figure 1.</b> The consumer touches the system three times — submitting, receiving emails, and looking up status by reference number. Everything between those touches happens in the internal console on the same case record.</figcaption>
+  </figure>
+</section>
+
+<section>
+  <div class="snum"><b>02</b><h2>The seven stages</h2></div>
+  <p>A case sits in exactly one stage at a time. Each stage names one owner and one action; the console shows that owner as a “Waiting on” chip on the case and as a task in that person's <b>My Work</b> list, so a case is never parked with nobody responsible.</p>
+
+  <figure>
+    <div class="scroll">
+      <svg viewBox="0 0 640 880" role="img" aria-label="Seven stages: New, Classified, Under Investigation, RCA and CAPA, Pending Approval, Resolved, Closed. Each has an owner and a gate condition. Pending Approval can be returned to RCA and CAPA for rework.">
+        <defs>
+          <marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+          </marker>
+        </defs>
+
+        <!-- 1 New -->
+        <rect class="dfill-b" x="150" y="14" width="290" height="52" rx="6"/><rect x="150" y="14" width="290" height="52" rx="6" class="dstroke"/>
+        <text class="dt-b" x="168" y="37">1 · New</text>
+        <text class="dt-s" x="168" y="55">Consumer submission received, reference issued</text>
+        <text class="dt" x="456" y="45">Customer Care</text>
+
+        <g color="var(--ink-3)"><line class="dline" x1="295" y1="66" x2="295" y2="106" marker-end="url(#a2)"/></g>
+        <text class="dt-g" x="305" y="90">category + severity set</text>
+
+        <!-- 2 Classified -->
+        <rect class="dfill-a" x="150" y="106" width="290" height="52" rx="6"/><rect x="150" y="106" width="290" height="52" rx="6" class="dstroke"/>
+        <text class="dt-b" x="168" y="129">2 · Classified</text>
+        <text class="dt-s" x="168" y="147">Complaint vs feedback, category, severity, SLA starts</text>
+        <text class="dt" x="456" y="137">Customer Care</text>
+
+        <g color="var(--ink-3)"><line class="dline" x1="295" y1="158" x2="295" y2="198" marker-end="url(#a2)"/></g>
+        <text class="dt-g" x="305" y="182">routed to an investigator</text>
+
+        <!-- 3 Under Investigation -->
+        <rect class="dfill-a" x="150" y="198" width="290" height="52" rx="6"/><rect x="150" y="198" width="290" height="52" rx="6" class="dstroke"/>
+        <text class="dt-b" x="168" y="221">3 · Under Investigation</text>
+        <text class="dt-s" x="168" y="239">5 Whys · Fishbone · Is/Is-Not · Gemba · attachments</text>
+        <text class="dt" x="456" y="229">Assignee</text>
+
+        <g color="var(--ink-3)"><line class="dline" x1="295" y1="250" x2="295" y2="290" marker-end="url(#a2)"/></g>
+        <text class="dt-g" x="305" y="274">≥ 1 finding recorded</text>
+
+        <!-- 4 RCA & CAPA -->
+        <rect class="dfill-a" x="150" y="290" width="290" height="52" rx="6"/><rect x="150" y="290" width="290" height="52" rx="6" class="dstroke"/>
+        <text class="dt-b" x="168" y="313">4 · RCA &amp; CAPA</text>
+        <text class="dt-s" x="168" y="331">Root cause → QA review → corrective/preventive actions</text>
+        <text class="dt" x="456" y="313">Assignee</text>
+        <text class="dt-s" x="456" y="330">+ QA Manager</text>
+
+        <g color="var(--ink-3)"><line class="dline" x1="295" y1="342" x2="295" y2="392" marker-end="url(#a2)"/></g>
+        <text class="dt-g" x="305" y="362">RCA reviewed</text>
+        <text class="dt-g" x="305" y="378">+ ≥ 1 action raised</text>
+
+        <!-- 5 Pending Approval -->
+        <rect class="dfill-a" x="150" y="392" width="290" height="52" rx="6"/><rect x="150" y="392" width="290" height="52" rx="6" class="dstroke"/>
+        <text class="dt-b" x="168" y="415">5 · Pending Approval</text>
+        <text class="dt-s" x="168" y="433">RCA and CAPA locked from further edits</text>
+        <text class="dt" x="456" y="423">QA Manager</text>
+
+        <g color="var(--ink-3)"><line class="dline" x1="295" y1="444" x2="295" y2="484" marker-end="url(#a2)"/></g>
+        <text class="dt-g" x="305" y="468">resolution approved</text>
+
+        <!-- return path -->
+        <path class="dcopper" d="M150 418 L110 418 L110 316 L142 316" marker-end="url(#a2)" color="var(--copper)" stroke-dasharray="5 4"/>
+        <text class="dt-r" x="14" y="360">returned</text>
+        <text class="dt-r" x="14" y="375">for rework</text>
+
+        <!-- 6 Resolved -->
+        <rect class="dfill-a" x="150" y="484" width="290" height="52" rx="6"/><rect x="150" y="484" width="290" height="52" rx="6" class="dstroke"/>
+        <text class="dt-b" x="168" y="507">6 · Resolved</text>
+        <text class="dt-s" x="168" y="525">Outcome written in plain language for the consumer</text>
+        <text class="dt" x="456" y="515">Customer Care</text>
+
+        <g color="var(--ink-3)"><line class="dline" x1="295" y1="536" x2="295" y2="576" marker-end="url(#a2)"/></g>
+        <text class="dt-g" x="305" y="560">customer confirmation</text>
+
+        <!-- 7 Closed -->
+        <rect class="dfill-d" x="150" y="576" width="290" height="52" rx="6"/><rect x="150" y="576" width="290" height="52" rx="6" class="dstroke"/>
+        <text class="dt-b" x="168" y="599">7 · Closed</text>
+        <text class="dt-s" x="168" y="617">Closure email sent, audit trail sealed</text>
+        <text class="dt" x="456" y="607">—</text>
+
+        <!-- side exits -->
+        <line class="dstroke" x1="20" y1="668" x2="620" y2="668" stroke-dasharray="3 4"/>
+        <text class="dt-s" x="20" y="694">EXITS AVAILABLE AT ANY OPEN STAGE</text>
+
+        <rect class="dfill-c" x="20" y="710" width="180" height="56" rx="6"/><rect x="20" y="710" width="180" height="56" rx="6" class="dstroke"/>
+        <text class="dt-b" x="38" y="733">Escalate</text>
+        <text class="dt-s" x="38" y="751">raises to QA Manager</text>
+
+        <rect class="dfill-c" x="230" y="710" width="180" height="56" rx="6"/><rect x="230" y="710" width="180" height="56" rx="6" class="dstroke"/>
+        <text class="dt-b" x="248" y="733">Batch on hold</text>
+        <text class="dt-s" x="248" y="751">containment on the lot</text>
+
+        <rect class="dfill-c" x="440" y="710" width="180" height="56" rx="6"/><rect x="440" y="710" width="180" height="56" rx="6" class="dstroke"/>
+        <text class="dt-b" x="458" y="733">Duplicate</text>
+        <text class="dt-s" x="458" y="751">closes against a parent</text>
+
+        <text class="dt-s" x="20" y="800">Feedback entries skip stages 3–5: they are acknowledged,</text>
+        <text class="dt-s" x="20" y="818">routed to the brand team and closed without an RCA.</text>
+        <text class="dt-s" x="20" y="846">SLA breach auto-escalates and flags the case red in every queue.</text>
+      </svg>
+    </div>
+    <figcaption><b>Figure 2.</b> Stage machine with owners on the right and the gate condition on each transition. The only backward path is the QA Manager returning a case from approval to RCA &amp; CAPA — there is no way to skip the review.</figcaption>
+  </figure>
+</section>
+
+<section>
+  <div class="snum"><b>03</b><h2>What blocks each move</h2></div>
+  <p>Gates are enforced in the console, not left to discipline. The “Submit for approval” button stays disabled with a visible checklist until all three of its conditions are met.</p>
+
+  <div class="gates">
+    <div class="gate">
+      <div class="g1">New → Classified<span>Customer Care Executive</span></div>
+      <ul><li>Complaint or feedback decided</li><li>Category chosen from the master list</li><li>Severity set — this fixes the SLA clock</li></ul>
+    </div>
+    <div class="gate">
+      <div class="g1">Classified → Under Investigation<span>Customer Care Executive</span></div>
+      <ul><li>Department selected</li><li>Assignee picked from users who <b>can</b> investigate in that department — Customer Care staff are not offered</li></ul>
+    </div>
+    <div class="gate">
+      <div class="g1">Under Investigation → RCA &amp; CAPA<span>Assigned QA/QC or plant user</span></div>
+      <ul><li>At least one investigation entry recorded, using any of the five tools</li></ul>
+    </div>
+    <div class="gate">
+      <div class="g1">RCA &amp; CAPA → Pending Approval<span>Assignee, gated by the QA Manager</span></div>
+      <ul><li>Root cause documented and classified as Process / Equipment / Material / External</li><li><b>RCA marked reviewed by the QA Manager</b> — re-saving the RCA resets this</li><li>At least one corrective or preventive action raised with an owner and target date</li></ul>
+    </div>
+    <div class="gate">
+      <div class="g1">Pending Approval → Resolved<span>QA Manager only</span></div>
+      <ul><li>Customer-facing resolution written</li><li>Approved — or returned to RCA &amp; CAPA for rework</li></ul>
+    </div>
+    <div class="gate">
+      <div class="g1">Resolved → Closed<span>Customer Care Executive</span></div>
+      <ul><li>Customer confirmation recorded (or explicitly closed without it)</li><li>Closure email queued to the consumer</li></ul>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="snum"><b>04</b><h2>Inside stage 4 — RCA and CAPA</h2></div>
+  <p>This is the only stage with an internal loop, and the one that carries the audit weight. The separation matters: the person who does an action never signs off its own effectiveness.</p>
+
+  <figure>
+    <div class="scroll">
+      <svg viewBox="0 0 880 250" role="img" aria-label="Within RCA and CAPA: investigator documents root cause, QA Manager reviews or returns it, investigator raises actions, owner completes them, QA Manager verifies effectiveness.">
+        <defs>
+          <marker id="a3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+          </marker>
+        </defs>
+
+        <rect class="dfill-a" x="14" y="60" width="150" height="62" rx="6"/><rect x="14" y="60" width="150" height="62" rx="6" class="dstroke"/>
+        <text class="dt-b" x="89" y="85" text-anchor="middle">Document RCA</text>
+        <text class="dt-s" x="89" y="103" text-anchor="middle">investigator</text>
+
+        <rect class="dfill-b" x="196" y="60" width="150" height="62" rx="6"/><rect x="196" y="60" width="150" height="62" rx="6" class="dstroke"/>
+        <text class="dt-b" x="271" y="85" text-anchor="middle">Review RCA</text>
+        <text class="dt-s" x="271" y="103" text-anchor="middle">QA Manager</text>
+
+        <rect class="dfill-a" x="378" y="60" width="150" height="62" rx="6"/><rect x="378" y="60" width="150" height="62" rx="6" class="dstroke"/>
+        <text class="dt-b" x="453" y="85" text-anchor="middle">Raise CA / PA</text>
+        <text class="dt-s" x="453" y="103" text-anchor="middle">investigator</text>
+
+        <rect class="dfill-a" x="560" y="60" width="150" height="62" rx="6"/><rect x="560" y="60" width="150" height="62" rx="6" class="dstroke"/>
+        <text class="dt-b" x="635" y="85" text-anchor="middle">Complete action</text>
+        <text class="dt-s" x="635" y="103" text-anchor="middle">action owner</text>
+
+        <rect class="dfill-b" x="742" y="60" width="126" height="62" rx="6"/><rect x="742" y="60" width="126" height="62" rx="6" class="dstroke"/>
+        <text class="dt-b" x="805" y="85" text-anchor="middle">Verify</text>
+        <text class="dt-s" x="805" y="103" text-anchor="middle">QA Manager</text>
+
+        <g color="var(--ink-3)">
+          <line class="dline" x1="164" y1="91" x2="188" y2="91" marker-end="url(#a3)"/>
+          <line class="dline" x1="346" y1="91" x2="370" y2="91" marker-end="url(#a3)"/>
+          <line class="dline" x1="528" y1="91" x2="552" y2="91" marker-end="url(#a3)"/>
+          <line class="dline" x1="710" y1="91" x2="734" y2="91" marker-end="url(#a3)"/>
+        </g>
+        <path class="dcopper" d="M271 122 L271 158 L89 158 L89 130" marker-end="url(#a3)" color="var(--copper)" stroke-dasharray="5 4"/>
+        <text class="dt-r" x="130" y="176">returned for rework</text>
+
+        <text class="dt-s" x="14" y="216">Effectiveness is a separate signature: an action shows “Effectiveness not verified”</text>
+        <text class="dt-s" x="14" y="234">until a QA Manager confirms it, and that check appears in the manager's own task list.</text>
+      </svg>
+    </div>
+    <figcaption><b>Figure 3.</b> The review and the verification are both held by the QA Manager, and both are separate from the people doing the work — the segregation an auditor looks for in a CAPA system.</figcaption>
+  </figure>
+</section>
+
+<section>
+  <div class="snum"><b>05</b><h2>Who can do what</h2></div>
+  <p>Permissions are attached to the role, not the person, and the console hides or explains every action a role cannot take rather than failing silently.</p>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Role</th><th>Classify</th><th>Assign</th><th>Investigate<br>RCA · CAPA</th><th>Review<br>&amp; approve</th><th>Close</th></tr></thead>
+      <tbody>
+        <tr><td>Customer Care Executive</td><td class="yes">✓</td><td class="yes">✓</td><td class="no">—</td><td class="no">—</td><td class="yes">✓</td></tr>
+        <tr><td>QA/QC User</td><td class="no">—</td><td class="no">—</td><td class="yes">✓</td><td class="no">—</td><td class="no">—</td></tr>
+        <tr><td>Plant / Department User</td><td class="no">—</td><td class="no">—</td><td class="yes">investigate · CAPA</td><td class="no">—</td><td class="no">—</td></tr>
+        <tr><td>QA Manager</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+        <tr><td>Management</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="no">—</td></tr>
+        <tr><td>System Administrator</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note">Management is deliberately read-only: dashboards, trends and MIS without the ability to alter a case. The System Administrator additionally holds master data — categories, the severity/SLA matrix, brands and SKUs, plants, users and notification templates.</p>
+</section>
+
+<section>
+  <div class="snum"><b>06</b><h2>Clocks, escalation and the audit trail</h2></div>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Severity</th><th>Response</th><th>Resolution</th><th>Handling rule</th></tr></thead>
+      <tbody>
+        <tr><td><span class="pill p-crit">Critical</span></td><td class="mono">8 h</td><td class="mono">48 h</td><td>Consumer safety or product integrity risk. Containment review mandatory.</td></tr>
+        <tr><td><span class="pill p-warn">Major</span></td><td class="mono">24 h</td><td class="mono">120 h</td><td>Quality deviation affecting saleability or brand perception.</td></tr>
+        <tr><td><span class="pill p-info">Minor</span></td><td class="mono">48 h</td><td class="mono">240 h</td><td>Cosmetic or informational issue with no consumption risk.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>The clock starts at classification, not at submission, so a case cannot be starved by leaving it unclassified — an unclassified case is itself the Customer Care queue's first task. Cases approaching their resolution SLA turn amber; breached cases turn red, auto-escalate to the QA Manager and are counted in the header of every screen.</p>
+  <div class="callout"><b>Every state change is written to the audit trail</b> with actor, timestamp and detail — registration, classification, assignment, each investigation entry, RCA, RCA review, each action raised, started, completed and verified, resolution, approval and closure. Entries are append-only; nothing in the case can be edited after the fact.</div>
+</section>
+
+<section>
+  <div class="snum"><b>07</b><h2>What the case carries</h2></div>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Group</th><th>Captured</th></tr></thead>
+      <tbody>
+        <tr><td>Consumer</td><td>Name, mobile, email, city, state, PIN</td></tr>
+        <tr><td>Product</td><td>Category, brand, variant, SKU, pack size — pre-filled from the QR</td></tr>
+        <tr><td>Traceability</td><td class="mono">Batch / lot, mfg. date, bottling unit</td></tr>
+        <tr><td>Purchase</td><td>Date, outlet, location, invoice reference</td></tr>
+        <tr><td>Complaint</td><td>Type, category, severity, priority, description, rating</td></tr>
+        <tr><td>Evidence</td><td>Photos, video, invoice or documents</td></tr>
+        <tr><td>Investigation</td><td>Tool used, structured findings, attachments, author, timestamp</td></tr>
+        <tr><td>RCA &amp; CAPA</td><td>Root cause, cause group, reviewer, actions with owner / target / status / effectiveness</td></tr>
+        <tr><td>Audit</td><td>Status history, assignment history, user actions, timestamps</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note">Batch and bottling-unit data are what let the dashboard answer the question a quality head actually asks: not “how many complaints this month”, but “is one filler line, one supplier lot or one contract bottler generating them”.</p>
+</section>
+
+<section>
+  <div class="snum"><b>08</b><h2>Outside Phase-1</h2></div>
+  <p>Named here so the boundary stays explicit: WhatsApp Business integration; SMS gateway and charges; AI/ML, OCR, automated categorisation or predictive analytics; native Android or iOS apps; proprietary SAP connector development beyond the agreed standard interface; historical data cleansing or migration not agreed at scope sign-off; third-party licences, hardware, infrastructure and consumption-based services.</p>
+</section>
+
+<footer>Audree Infotech · Customer Complaint &amp; Feedback Management System · Phase-1 flow reference. Screens, seed data and figures describe the working prototype; the deployed build targets .NET with Microsoft SQL Server.</footer>
+</div>

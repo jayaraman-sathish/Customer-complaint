@@ -1,0 +1,2142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Audree Complaint Desk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+:root{
+  --ground:#E7ECEE; --surface:#FFFFFF; --surface-2:#F1F5F6; --surface-3:#E2E9EB;
+  --line:#C7D3D8; --line-2:#DCE4E7;
+  --ink:#0F171B; --ink-2:#3E4F57; --ink-3:#6D8089;
+  --copper:#A2542A; --copper-2:#C4763F; --copper-wash:#F3E6DC;
+  --ok:#1C7A5B; --ok-wash:#DDF0E8;
+  --warn:#9C6607; --warn-wash:#F7ECD5;
+  --crit:#AC3125; --crit-wash:#F8E0DC;
+  --info:#2E5E80; --info-wash:#E0EAF1;
+  --shadow-1:0 1px 2px rgba(15,23,27,.07);
+  --shadow-2:0 2px 4px rgba(15,23,27,.06),0 14px 30px -18px rgba(15,23,27,.35);
+  --r:6px;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#0C1215; --surface:#151E22; --surface-2:#1B262B; --surface-3:#222F35;
+    --line:#2C3A41; --line-2:#232F35;
+    --ink:#E1EAED; --ink-2:#A7B9C0; --ink-3:#7A8D95;
+    --copper:#DB8853; --copper-2:#EBA478; --copper-wash:#2D1C12;
+    --ok:#4FC095; --ok-wash:#0F2A20;
+    --warn:#DCA745; --warn-wash:#2A2010;
+    --crit:#E5735F; --crit-wash:#2D1512;
+    --info:#79ADD3; --info-wash:#14252F;
+    --shadow-1:0 1px 2px rgba(0,0,0,.5);
+    --shadow-2:0 2px 4px rgba(0,0,0,.4),0 14px 30px -18px rgba(0,0,0,.8);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0C1215; --surface:#151E22; --surface-2:#1B262B; --surface-3:#222F35;
+  --line:#2C3A41; --line-2:#232F35;
+  --ink:#E1EAED; --ink-2:#A7B9C0; --ink-3:#7A8D95;
+  --copper:#DB8853; --copper-2:#EBA478; --copper-wash:#2D1C12;
+  --ok:#4FC095; --ok-wash:#0F2A20;
+  --warn:#DCA745; --warn-wash:#2A2010;
+  --crit:#E5735F; --crit-wash:#2D1512;
+  --info:#79ADD3; --info-wash:#14252F;
+  --shadow-1:0 1px 2px rgba(0,0,0,.5);
+  --shadow-2:0 2px 4px rgba(0,0,0,.4),0 14px 30px -18px rgba(0,0,0,.8);
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;background:var(--ground);color:var(--ink);
+  font-family:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{font-family:Archivo,"IBM Plex Sans",system-ui,sans-serif;margin:0;text-wrap:balance;letter-spacing:-.015em}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--copper);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+.mono{font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;font-variant-numeric:tabular-nums}
+.eyebrow{font-family:Archivo,sans-serif;font-size:10px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3)}
+.muted{color:var(--ink-3)}
+.num{font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums}
+
+/* ---------- shell ---------- */
+#app{display:grid;grid-template-columns:236px 1fr;min-height:100vh}
+.rail{background:var(--surface);border-right:1px solid var(--line);display:flex;flex-direction:column;gap:4px;padding:16px 12px;position:sticky;top:0;height:100vh;overflow:auto}
+.brand{display:flex;gap:10px;align-items:center;padding:4px 8px 14px}
+.mark{width:30px;height:30px;border-radius:4px;background:var(--copper);display:grid;place-items:center;flex:none;box-shadow:inset 0 -8px 12px -8px rgba(0,0,0,.5)}
+.mark span{font-family:Archivo;font-weight:700;font-size:14px;color:#fff;letter-spacing:-.04em}
+.brand b{font-family:Archivo;font-size:14.5px;font-weight:700;display:block;line-height:1.15}
+.brand small{font-size:10.5px;color:var(--ink-3);letter-spacing:.04em}
+.navgroup{margin-top:12px;padding:0 8px 4px}
+.nav{display:flex;align-items:center;gap:9px;padding:7px 9px;border-radius:var(--r);cursor:pointer;color:var(--ink-2);border:1px solid transparent;background:none;width:100%;text-align:left;font-size:13.5px}
+.nav:hover{background:var(--surface-2);color:var(--ink)}
+.nav[aria-current="true"]{background:var(--copper-wash);color:var(--copper);border-color:color-mix(in srgb,var(--copper) 26%,transparent);font-weight:600}
+.nav svg{flex:none;width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.6}
+.nav .count{margin-left:auto;font-family:"IBM Plex Mono",monospace;font-size:11px;background:var(--surface-3);color:var(--ink-2);border-radius:9px;padding:1px 6px}
+.railfoot{margin-top:auto;padding:12px 8px 0;border-top:1px solid var(--line-2);font-size:11px;color:var(--ink-3);line-height:1.45}
+
+.main{min-width:0;display:flex;flex-direction:column}
+.topbar{display:flex;align-items:center;gap:12px;padding:12px 24px;border-bottom:1px solid var(--line);background:var(--surface);position:sticky;top:0;z-index:20;flex-wrap:wrap}
+.topbar h1{font-size:17px}
+.spacer{flex:1}
+.chip{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);border-radius:20px;padding:3px 10px;font-size:11.5px;color:var(--ink-2);background:var(--surface-2)}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--ok);flex:none}
+.rolepick{border:1px solid var(--line);background:var(--surface-2);border-radius:var(--r);padding:5px 8px;font-size:12.5px}
+.iconbtn{border:1px solid var(--line);background:var(--surface-2);border-radius:var(--r);padding:5px 9px;cursor:pointer;font-size:12.5px;color:var(--ink-2)}
+.iconbtn:hover{background:var(--surface-3);color:var(--ink)}
+.view{padding:22px 24px 56px;max-width:1360px;width:100%}
+
+/* ---------- primitives ---------- */
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:var(--r);padding:7px 13px;cursor:pointer;font-size:13px;font-weight:500;color:var(--ink);white-space:nowrap}
+.btn:hover:not(:disabled){background:var(--surface-2)}
+.btn.primary{background:var(--copper);border-color:var(--copper);color:#fff}
+.btn.primary:hover:not(:disabled){background:var(--copper-2);border-color:var(--copper-2)}
+.btn.danger{color:var(--crit);border-color:color-mix(in srgb,var(--crit) 40%,transparent)}
+.btn:disabled{opacity:.42;cursor:not-allowed}
+.btn.sm{padding:4px 9px;font-size:12px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:8px}
+.pad{padding:16px 18px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.grid{display:grid;gap:14px}
+.field{display:flex;flex-direction:column;gap:5px;min-width:0}
+.field label{font-size:11.5px;font-weight:600;color:var(--ink-2);letter-spacing:.02em}
+.field input,.field select,.field textarea{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:7px 9px;font-size:13.5px;width:100%}
+.field textarea{resize:vertical;min-height:76px;line-height:1.5}
+.field .hint{font-size:11px;color:var(--ink-3)}
+.req::after{content:" *";color:var(--crit)}
+
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;white-space:nowrap;font-family:Archivo,sans-serif;letter-spacing:.02em}
+.p-new{background:var(--copper-wash);color:var(--copper)}
+.p-info{background:var(--info-wash);color:var(--info)}
+.p-warn{background:var(--warn-wash);color:var(--warn)}
+.p-ok{background:var(--ok-wash);color:var(--ok)}
+.p-crit{background:var(--crit-wash);color:var(--crit)}
+.p-mute{background:var(--surface-3);color:var(--ink-3)}
+
+.sev{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600}
+.sev i{width:3px;height:13px;border-radius:2px;display:inline-block}
+.sev-Critical i{background:var(--crit)} .sev-Critical{color:var(--crit)}
+.sev-Major i{background:var(--warn)} .sev-Major{color:var(--warn)}
+.sev-Minor i{background:var(--ink-3)} .sev-Minor{color:var(--ink-2)}
+
+table{border-collapse:collapse;width:100%;font-size:13px}
+th{text-align:left;font-family:Archivo,sans-serif;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);font-weight:600;padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap;background:var(--surface-2)}
+td{padding:9px 10px;border-bottom:1px solid var(--line-2);vertical-align:middle}
+tbody tr:hover{background:var(--surface-2)}
+tbody tr.clickable{cursor:pointer}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+.tablewrap table{min-width:980px}
+tbody tr:last-child td{border-bottom:none}
+
+.empty{padding:44px 20px;text-align:center;color:var(--ink-3);font-size:13px}
+
+/* ---------- dashboard ---------- */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.kpi{background:var(--surface);padding:13px 15px;display:flex;flex-direction:column;gap:3px}
+.kpi .v{font-family:Archivo;font-size:25px;font-weight:700;letter-spacing:-.03em;line-height:1.1;font-variant-numeric:tabular-nums}
+.kpi .l{font-size:11.5px;color:var(--ink-3)}
+.kpi .d{font-size:11px;font-weight:600}
+.kpi.alert .v{color:var(--crit)}
+
+.panelhead{display:flex;align-items:baseline;gap:10px;padding:13px 18px 0}
+.panelhead h3{font-size:14px}
+.panelhead .sub{font-size:11.5px;color:var(--ink-3)}
+
+.bars{display:flex;flex-direction:column;gap:9px;padding:14px 18px 18px}
+.bar{display:grid;grid-template-columns:minmax(96px,34%) 1fr auto;gap:10px;align-items:center;font-size:12.5px}
+.bar .lab{color:var(--ink-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar .track{height:9px;background:var(--surface-3);border-radius:5px;overflow:hidden}
+.bar .fill{height:100%;border-radius:5px;background:var(--copper)}
+.bar .val{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink-2);font-variant-numeric:tabular-nums;min-width:22px;text-align:right}
+
+.cols{display:flex;align-items:flex-end;gap:12px;padding:20px 18px 14px;height:168px}
+.col{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:6px;height:100%}
+.col .stack{width:100%;max-width:52px;border-radius:4px 4px 0 0;background:var(--copper);min-height:2px;position:relative}
+.col .n{font-family:"IBM Plex Mono",monospace;font-size:12px;font-weight:500}
+.col .c{font-size:11px;color:var(--ink-3);text-align:center;line-height:1.25}
+
+.donutwrap{display:flex;gap:18px;align-items:center;padding:16px 18px 20px;flex-wrap:wrap}
+.legend{display:flex;flex-direction:column;gap:6px;font-size:12.5px;min-width:150px;flex:1}
+.legend div{display:flex;align-items:center;gap:8px}
+.legend i{width:9px;height:9px;border-radius:2px;flex:none}
+.legend .n{margin-left:auto;font-family:"IBM Plex Mono",monospace;color:var(--ink-2)}
+
+/* ---------- queue ---------- */
+.filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.filters input[type=search],.filters select{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:6px 9px;font-size:13px}
+.filters input[type=search]{min-width:210px}
+.tabbar{display:flex;gap:2px;border-bottom:1px solid var(--line);margin-bottom:16px;overflow-x:auto}
+.tab{border:none;background:none;padding:9px 13px;cursor:pointer;font-size:13px;color:var(--ink-3);border-bottom:2px solid transparent;white-space:nowrap;font-weight:500}
+.tab:hover{color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--copper);border-bottom-color:var(--copper);font-weight:600}
+.tab .tc{font-family:"IBM Plex Mono",monospace;font-size:10.5px;background:var(--surface-3);color:var(--ink-3);border-radius:9px;padding:1px 6px;margin-left:6px}
+.tab[aria-selected="true"] .tc{background:var(--copper-wash);color:var(--copper)}
+.tools{display:flex;gap:4px;flex-wrap:wrap}
+.tool{font-size:10.5px;font-family:Archivo,sans-serif;font-weight:600;border:1px solid var(--line);border-radius:4px;padding:1px 6px;color:var(--ink-2);background:var(--surface-2);white-space:nowrap}
+.tool.rca{border-color:color-mix(in srgb,var(--ok) 40%,transparent);background:var(--ok-wash);color:var(--ok)}
+
+/* ---------- case file ---------- */
+.casehead{display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap;margin-bottom:16px}
+.casehead h2{font-size:21px;letter-spacing:-.02em}
+.caseid{font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--copper);font-weight:500}
+.casegrid{display:grid;grid-template-columns:1fr 316px;gap:16px;align-items:start}
+@media(max-width:1080px){.casegrid{grid-template-columns:1fr}}
+.kv{display:grid;grid-template-columns:118px 1fr;gap:6px 12px;font-size:13px}
+.kv dt{color:var(--ink-3);font-size:12px}
+.kv dd{margin:0;overflow-wrap:anywhere}
+.section{border-top:1px solid var(--line-2);padding-top:14px;margin-top:14px}
+.section:first-child{border-top:none;padding-top:0;margin-top:0}
+.section h4{font-size:12px;text-transform:uppercase;letter-spacing:.09em;color:var(--ink-3);margin-bottom:10px;font-weight:600}
+
+.timeline{display:flex;flex-direction:column;gap:0;position:relative}
+.tl{display:grid;grid-template-columns:22px 1fr;gap:10px;padding-bottom:14px;position:relative}
+.tl:not(:last-child)::before{content:"";position:absolute;left:10px;top:18px;bottom:0;width:1px;background:var(--line)}
+.tl .mk{width:21px;height:21px;border-radius:50%;background:var(--surface-2);border:1px solid var(--line);display:grid;place-items:center;font-size:10px;font-weight:600;color:var(--ink-3);font-family:"IBM Plex Mono",monospace;z-index:1}
+.tl.done .mk{background:var(--ok-wash);border-color:var(--ok);color:var(--ok)}
+.tl.now .mk{background:var(--copper);border-color:var(--copper);color:#fff}
+.tl .t{font-size:13px;font-weight:600}
+.tl .m{font-size:12px;color:var(--ink-3)}
+
+.note{border-left:2px solid var(--line);padding:2px 0 2px 12px;margin-bottom:12px}
+.note .h{font-size:11.5px;color:var(--ink-3);display:flex;gap:8px;flex-wrap:wrap}
+.note .b{font-size:13px;margin-top:2px}
+
+.evidence{display:flex;gap:8px;flex-wrap:wrap}
+.ev{width:78px;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:var(--surface-2);font-size:10px;text-align:center}
+.ev img{width:100%;height:58px;object-fit:cover;display:block}
+.ev .ph{height:58px;display:grid;place-items:center;color:var(--ink-3);font-size:18px}
+.ev .nm{padding:3px 4px;color:var(--ink-3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+.capa{border:1px solid var(--line);border-radius:var(--r);padding:10px 12px;margin-bottom:8px;background:var(--surface-2)}
+.capa .top{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:4px}
+.capa .meta{font-size:11.5px;color:var(--ink-3);display:flex;gap:12px;flex-wrap:wrap;margin-top:5px}
+
+.actionbox{background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:14px 16px}
+.actionbox h4{font-size:12px;text-transform:uppercase;letter-spacing:.09em;color:var(--ink-3);margin-bottom:10px;font-weight:600}
+.stagenote{font-size:12px;color:var(--ink-3);margin-bottom:10px;line-height:1.45}
+.denied{font-size:11.5px;color:var(--warn);background:var(--warn-wash);border-radius:var(--r);padding:7px 9px;line-height:1.4}
+
+
+.toolbar{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+.toolbtn{border:1px solid var(--line);background:var(--surface);border-radius:var(--r);padding:9px 11px;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:2px}
+.toolbtn b{font-family:Archivo,sans-serif;font-size:12.5px;font-weight:600}
+.toolbtn small{font-size:10.5px;color:var(--ink-3);line-height:1.3}
+.toolbtn:hover{border-color:var(--copper)}
+.toolbtn[aria-pressed="true"]{background:var(--copper-wash);border-color:var(--copper);color:var(--copper)}
+.toolbtn[aria-pressed="true"] small{color:var(--copper)}
+.whys{margin:6px 0 4px;padding-left:20px;font-size:13px;line-height:1.55}
+.whys li::marker{font-family:"IBM Plex Mono",monospace;color:var(--copper);font-weight:600}
+.checks{display:flex;flex-direction:column;gap:5px;margin:10px 0 4px;font-size:12.5px;color:var(--ink-3)}
+.checks div{display:flex;gap:8px;align-items:center}
+.checks i{font-style:normal;width:16px;text-align:center;font-family:"IBM Plex Mono",monospace}
+.checks .on{color:var(--ink)} .checks .on i{color:var(--ok)}
+
+
+.chip.waiting{background:var(--copper-wash);border-color:color-mix(in srgb,var(--copper) 26%,transparent);color:var(--copper)}
+.chip.waiting b{font-weight:600}
+.tasklist{display:flex;flex-direction:column}
+.task{padding:12px 18px;border-top:1px solid var(--line-2);cursor:pointer;display:flex;flex-direction:column;gap:5px}
+.task:first-child{border-top:none}
+.task:hover{background:var(--surface-2)}
+.tw{display:flex;gap:7px;align-items:center;flex-wrap:wrap}
+.tt{font-size:14px;font-weight:500;font-family:Archivo,sans-serif}
+.tm{font-size:12px;color:var(--ink-3)}
+.owner{font-size:12.5px;line-height:1.45;background:var(--surface-3);border-radius:var(--r);padding:8px 10px;margin-bottom:10px;color:var(--ink-2)}
+.owner.me{background:var(--ok-wash);color:var(--ok)}
+.owner b{font-weight:600}
+
+
+.callout{font-size:13px;line-height:1.5;background:var(--surface-2);border-left:3px solid var(--copper);border-radius:0 var(--r) var(--r) 0;padding:10px 12px;margin-bottom:10px;color:var(--ink-2)}
+.callout.crit{border-left-color:var(--crit);background:var(--crit-wash);color:var(--crit)}
+.callout a{color:inherit}
+.rgrp{margin-bottom:14px}
+.rgh{font-family:Archivo,sans-serif;font-size:12.5px;font-weight:600;display:flex;gap:7px;align-items:center}
+.rgn{font-family:"IBM Plex Mono",monospace;font-size:10.5px;background:var(--surface-3);color:var(--ink-3);border-radius:9px;padding:1px 6px}
+.rgm{font-size:11.5px;color:var(--ink-3);margin-bottom:6px}
+.rrow{display:flex;gap:9px;align-items:center;flex-wrap:wrap;font-size:12.5px;padding:4px 0;border-top:1px solid var(--line-2)}
+.rrow a{color:var(--copper);text-decoration:none}
+.rd{color:var(--ink-3);font-size:11.5px}
+.rc{font-size:11.5px;color:var(--ink-2)}
+.confirmbox{margin-top:12px;border-top:1px solid var(--line);padding-top:12px}
+.ch{font-family:Archivo,sans-serif;font-size:13.5px;font-weight:600;margin-bottom:8px}
+.confirmbox textarea{width:100%;border:1px solid var(--line);border-radius:7px;padding:8px 10px;font-size:13px;min-height:54px;background:var(--surface);resize:vertical}
+.crow{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.cresp{margin-top:12px;border-radius:var(--r);padding:9px 11px;font-size:12.5px;line-height:1.45}
+.cresp.ok{background:var(--ok-wash);color:var(--ok)}
+.cresp.no{background:var(--crit-wash);color:var(--crit)}
+
+/* ---------- customer portal ---------- */
+.portal{display:grid;grid-template-columns:392px 1fr;gap:26px;align-items:start}
+@media(max-width:940px){.portal{grid-template-columns:1fr}}
+.phone{background:var(--surface);border:1px solid var(--line);border-radius:26px;padding:10px;box-shadow:var(--shadow-2)}
+.screen{background:var(--ground);border-radius:18px;overflow:hidden;height:clamp(500px,calc(100vh - 150px),684px);display:flex;flex-direction:column}
+.qr{cursor:pointer}
+.qr:hover{border-color:var(--copper)}
+.scanhint{font-size:11px;color:var(--ink-3);text-align:center;margin-top:5px}
+.statusbar{display:flex;justify-content:space-between;padding:8px 16px 4px;font-size:10.5px;color:var(--ink-3);font-family:"IBM Plex Mono",monospace}
+.pbar{background:var(--ink);color:var(--surface);padding:11px 16px;display:flex;align-items:center;gap:9px}
+:root[data-theme="dark"] .pbar,:root:not([data-theme="light"]) .pbar{}
+.pbar .m{width:22px;height:22px;border-radius:3px;background:var(--copper);display:grid;place-items:center;font-family:Archivo;font-weight:700;font-size:10px;color:#fff;flex:none}
+.pbar b{font-family:Archivo;font-size:13px;font-weight:600;color:var(--ground)}
+.pbar small{font-size:10px;opacity:.6;display:block;color:var(--ground)}
+.pbody{flex:1;overflow-y:auto;padding:16px}
+.pbody::-webkit-scrollbar{width:5px}
+.pbody::-webkit-scrollbar-thumb{background:var(--line);border-radius:3px}
+.pcard{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:12px}
+.pctx{background:var(--copper-wash);border:1px solid color-mix(in srgb,var(--copper) 24%,transparent);border-radius:10px;padding:12px 14px;margin-bottom:14px}
+.pctx .b{font-family:Archivo;font-weight:600;font-size:15px;color:var(--copper)}
+.pchoice{display:flex;flex-direction:column;gap:10px}
+.bigbtn{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:15px;text-align:left;cursor:pointer;display:flex;gap:12px;align-items:flex-start}
+.bigbtn:hover{border-color:var(--copper);background:var(--copper-wash)}
+.bigbtn b{display:block;font-family:Archivo;font-size:14px}
+.bigbtn small{color:var(--ink-3);font-size:11.5px;line-height:1.4;display:block;margin-top:2px}
+.bigbtn .ic{font-size:19px;line-height:1}
+.steps{display:flex;gap:5px;margin-bottom:14px}
+.steps i{height:3px;flex:1;border-radius:2px;background:var(--line)}
+.steps i.on{background:var(--copper)}
+.pfield{margin-bottom:11px}
+.pfield label{font-size:11px;font-weight:600;color:var(--ink-2);display:block;margin-bottom:4px}
+.pfield input,.pfield select,.pfield textarea{width:100%;border:1px solid var(--line);border-radius:7px;padding:9px 10px;font-size:13.5px;background:var(--surface)}
+.pfield textarea{min-height:82px;resize:vertical}
+.err{color:var(--crit);font-size:11px;margin-top:3px}
+.pfoot{padding:11px 16px;border-top:1px solid var(--line);background:var(--surface);display:flex;gap:8px}
+.pfoot .btn{flex:1;justify-content:center;text-align:center}
+.stars{display:flex;gap:5px}
+.stars button{background:none;border:none;font-size:25px;cursor:pointer;color:var(--line);padding:0;line-height:1}
+.stars button.on{color:var(--copper-2)}
+.ack{text-align:center;padding:20px 6px}
+.ack .tick{width:52px;height:52px;border-radius:50%;background:var(--ok-wash);color:var(--ok);display:grid;place-items:center;margin:0 auto 14px;font-size:25px}
+.ref{font-family:"IBM Plex Mono",monospace;font-size:19px;font-weight:600;color:var(--copper);letter-spacing:.02em;margin:8px 0}
+.qrpanel{display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap}
+.qr{width:118px;height:118px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px;flex:none}
+.qr svg{width:100%;height:100%;display:block}
+.skulist{display:flex;flex-wrap:wrap;gap:6px}
+.skubtn{border:1px solid var(--line);background:var(--surface);border-radius:20px;padding:4px 11px;font-size:12px;cursor:pointer}
+.skubtn[aria-pressed="true"]{background:var(--copper);border-color:var(--copper);color:#fff;font-weight:500}
+
+/* ---------- consumer-only page (what a phone sees after scanning) ---------- */
+body.consumer #app{display:none}
+body.consumer{background:var(--ground)}
+.cpage{max-width:480px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;background:var(--ground)}
+.cpage .pbar{position:sticky;top:0;z-index:5}
+.cpage .pbody{flex:1;padding:18px 16px 24px}
+.cpage .pfoot{position:sticky;bottom:0}
+.cfoot{text-align:center;font-size:11px;color:var(--ink-3);padding:12px 16px 20px;max-width:480px;margin:0 auto}
+
+/* ---------- admin ---------- */
+.adminsplit{display:grid;grid-template-columns:206px 1fr;gap:18px;align-items:start}
+@media(max-width:840px){.adminsplit{grid-template-columns:1fr}}
+.sidelist{display:flex;flex-direction:column;gap:2px}
+.sidelist button{border:none;background:none;text-align:left;padding:7px 10px;border-radius:var(--r);cursor:pointer;font-size:13px;color:var(--ink-2)}
+.sidelist button:hover{background:var(--surface-2)}
+.sidelist button[aria-current="true"]{background:var(--surface);border:1px solid var(--line);color:var(--ink);font-weight:600}
+
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--ground);padding:9px 16px;border-radius:20px;font-size:13px;box-shadow:var(--shadow-2);z-index:200;max-width:88vw}
+:root[data-theme="dark"] .toast,:root:not([data-theme="light"]) .toast{background:var(--surface-3);color:var(--ink);border:1px solid var(--line)}
+
+.modalbg{position:fixed;inset:0;background:rgba(10,16,19,.55);display:grid;place-items:center;z-index:150;padding:20px}
+.modal{background:var(--surface);border:1px solid var(--line);border-radius:10px;max-width:520px;width:100%;box-shadow:var(--shadow-2);max-height:88vh;overflow:auto}
+.modal .mh{padding:15px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px}
+.modal .mh h3{font-size:15px}
+.modal .mb{padding:16px 18px}
+.modal .mf{padding:12px 18px;border-top:1px solid var(--line);display:flex;gap:8px;justify-content:flex-end}
+
+@media(max-width:860px){
+  #app{grid-template-columns:1fr}
+  .rail{position:static;height:auto;flex-direction:row;overflow-x:auto;align-items:center;border-right:none;border-bottom:1px solid var(--line);padding:8px 10px}
+  .brand{padding:0 12px 0 4px;flex:none} .brand small{display:none}
+  .navgroup{display:none} .railfoot{display:none}
+  .nav{width:auto;flex:none} .nav .count{display:none}
+  .view{padding:16px 14px 48px}
+  .casegrid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div id="app">
+  <nav class="rail" id="rail"></nav>
+  <div class="main">
+    <div class="topbar" id="topbar"></div>
+    <div class="view" id="view"></div>
+  </div>
+</div>
+<div id="overlay"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script>
+"use strict";
+
+/* ============================ MASTERS ============================ */
+const COMPANY = "Audree Infotech";
+const ARTIFACT_URL = "https://claude.ai/code/artifact/22df31be-22e6-4a1b-b78f-96a759beb13f";
+
+const BRANDS = [
+  {name:"Kanchan Reserve", cat:"Indian Whisky", variants:[
+    {sku:"KR-750", v:"Premium Blend", pack:"750 ml"},
+    {sku:"KR-375", v:"Premium Blend", pack:"375 ml"},
+    {sku:"KRB-750", v:"Barrel Select", pack:"750 ml"}]},
+  {name:"Ashwa XO", cat:"Brandy", variants:[
+    {sku:"AX-750", v:"XO", pack:"750 ml"},
+    {sku:"AX-180", v:"XO", pack:"180 ml"}]},
+  {name:"Saltrock", cat:"Gin", variants:[
+    {sku:"SR-700", v:"Coastal Dry", pack:"700 ml"},
+    {sku:"SRC-700", v:"Citrus Cask", pack:"700 ml"}]},
+  {name:"Old Ferry", cat:"Rum", variants:[
+    {sku:"OF-750", v:"Dark Reserve", pack:"750 ml"},
+    {sku:"OF-180", v:"Dark Reserve", pack:"180 ml"}]},
+  {name:"Nilaya", cat:"Vodka", variants:[
+    {sku:"NL-750", v:"Triple Filtered", pack:"750 ml"}]}
+];
+
+const PLANTS = ["Aurangabad Unit-1","Nashik Bottling Unit","Hyderabad Unit-3","Belgaum (Contract Bottler)"];
+const DEPTS = ["Quality Assurance","Bottling & Production","Packaging","Supply Chain","Customer Care"];
+
+let CATEGORIES = [
+  {name:"Foreign particle / sediment", dept:"Quality Assurance", defSev:"Critical"},
+  {name:"Off-taste / off-odour", dept:"Quality Assurance", defSev:"Critical"},
+  {name:"Suspected counterfeit / tamper", dept:"Quality Assurance", defSev:"Critical"},
+  {name:"Low fill level / short volume", dept:"Bottling & Production", defSev:"Major"},
+  {name:"Cap or seal leakage", dept:"Bottling & Production", defSev:"Major"},
+  {name:"Batch code illegible", dept:"Bottling & Production", defSev:"Minor"},
+  {name:"Label defect / misprint", dept:"Packaging", defSev:"Minor"},
+  {name:"Broken or chipped bottle", dept:"Packaging", defSev:"Major"},
+  {name:"Excise label / hologram issue", dept:"Supply Chain", defSev:"Major"},
+  {name:"Outer carton damage in transit", dept:"Supply Chain", defSev:"Minor"}
+];
+
+let SEVERITIES = [
+  {name:"Critical", respHrs:8,  resHrs:48,  note:"Consumer safety or product integrity risk. Containment review mandatory."},
+  {name:"Major",   respHrs:24, resHrs:120, note:"Quality deviation affecting saleability or brand perception."},
+  {name:"Minor",   respHrs:48, resHrs:240, note:"Cosmetic or informational issue with no consumption risk."}
+];
+
+const ROLES = {
+  "Customer Care Executive":["triage","assign","communicate","close","escalate"],
+  "QA/QC User":["investigate","rca","capa","resolve","communicate"],
+  "Plant / Dept User":["investigate","capa"],
+  "QA Manager":["triage","assign","investigate","rca","capa","resolve","approve","escalate","hold","close","communicate"],
+  "Management (read-only)":[],
+  "System Administrator":["admin","triage","assign","investigate","rca","capa","resolve","approve","escalate","hold","close","communicate"]
+};
+
+let USERS = [
+  {name:"R. Deshmukh", role:"Customer Care Executive", dept:"Customer Care", active:true},
+  {name:"S. Kulkarni",  role:"Customer Care Executive", dept:"Customer Care", active:true},
+  {name:"A. Menon",     role:"QA/QC User", dept:"Quality Assurance", active:true},
+  {name:"P. Iyer",      role:"QA/QC User", dept:"Quality Assurance", active:true},
+  {name:"V. Rathod",    role:"Plant / Dept User", dept:"Bottling & Production", active:true},
+  {name:"N. Bhatt",     role:"Plant / Dept User", dept:"Packaging", active:true},
+  {name:"K. Suresh",    role:"QA Manager", dept:"Quality Assurance", active:true},
+  {name:"M. Fernandes", role:"Management (read-only)", dept:"Management", active:true},
+  {name:"admin",        role:"System Administrator", dept:"IT", active:true}
+];
+
+let TEMPLATES = [
+  {key:"ACK", subject:"We have received your complaint — {{ref}}", body:"Dear {{customer}},\n\nThank you for writing to "+COMPANY+". Your reference number is {{ref}}. Our quality team will respond within {{respSla}} working hours.\n\nQuality Assurance, "+COMPANY},
+  {key:"ASSIGN", subject:"Case {{ref}} assigned to you", body:"Case {{ref}} ({{severity}} / {{category}}) has been assigned to {{assignee}}. Resolution due {{due}}."},
+  {key:"ESCALATE", subject:"ESCALATION — {{ref}} breaching SLA", body:"Case {{ref}} has crossed its resolution SLA. Batch {{batch}} from {{plant}}. Immediate review required."},
+  {key:"CLOSURE", subject:"Your complaint {{ref}} has been resolved", body:"Dear {{customer}},\n\nYour complaint {{ref}} has been investigated and closed.\n\nOutcome: {{resolution}}\n\nThank you for helping us improve.\n\nQuality Assurance, "+COMPANY}
+];
+
+const STATUS_FLOW = ["New","Classified","Under Investigation","RCA & CAPA","Pending Approval","Resolved","Closed"];
+const STATUS_TONE = {"New":"p-new","Classified":"p-info","Under Investigation":"p-warn","RCA & CAPA":"p-warn","Pending Approval":"p-warn","Resolved":"p-ok","Closed":"p-mute","Rejected":"p-mute","Duplicate":"p-mute"};
+
+/* ============================ STATE ============================ */
+const NOW = new Date("2026-09-04T11:20:00");
+const LS_KEY = "meridian_ccfms_v1";
+const SEED_VERSION = 6;   // bump whenever the seeded demo data changes
+
+let state = {
+  view:"tasks", role:"QA Manager", user:"K. Suresh",
+  caseId:null, caseTab:"summary",
+  queueTab:"open", q:"", fSev:"", fStatus:"", fBrand:"", fDept:"",
+  adminTab:"categories", reportKind:"overview",
+  portal:{step:"choice", type:null, data:{}, errors:{}, evidence:[], ref:null, trackRef:"", trackMob:"", trackResult:undefined, sku:"KR-750"}
+};
+
+let DB = {cases:[], seq:{C:0,F:0}, audit:[]};
+
+/* ---------- helpers ---------- */
+const $ = s => document.querySelector(s);
+const esc = s => String(s==null?"":s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const iso = d => d.toISOString();
+const hoursBetween = (a,b) => (b-a)/36e5;
+const addH = (d,h) => new Date(d.getTime()+h*36e5);
+const MON = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const p2 = n => String(n).padStart(2,"0");
+const fmtD  = s => { if(!s) return "—"; const d=new Date(s); return p2(d.getDate())+" "+MON[d.getMonth()]+" "+d.getFullYear(); };
+const fmtDT = s => { const d=new Date(s); return fmtD(s)+" · "+p2(d.getHours())+":"+p2(d.getMinutes()); };
+const can = c => (ROLES[state.role]||[]).includes(c);
+const sevOf = n => SEVERITIES.find(s=>s.name===n) || SEVERITIES[2];
+const catOf = n => CATEGORIES.find(c=>c.name===n);
+const canInvestigate = u => u.active && (ROLES[u.role]||[]).includes("investigate");
+const investigators = dept => { const inD=USERS.filter(u=>canInvestigate(u)&&u.dept===dept); return inD.length?inD:USERS.filter(u=>canInvestigate(u)&&u.role==="QA Manager"); };
+const openCases = () => DB.cases.filter(c => c.type==="Complaint" && !["Closed","Rejected","Duplicate"].includes(c.status));
+
+function ageH(c){ return hoursBetween(new Date(c.createdAt), new Date(c.closure?.at || c.resolution?.at || NOW)); }
+function dueAt(c){ return addH(new Date(c.createdAt), sevOf(c.severity).resHrs); }
+function slaState(c){
+  if(c.type==="Feedback") return {label:"—", tone:"p-mute"};
+  const stopped = c.closure?.at || c.resolution?.at;
+  const due = dueAt(c), ref = new Date(stopped || NOW);
+  if(stopped) return ref>due ? {label:"Breached", tone:"p-crit"} : {label:"Met", tone:"p-ok"};
+  const left = hoursBetween(ref, due);
+  if(left < 0) return {label:"Breached "+Math.round(-left)+"h", tone:"p-crit"};
+  if(left < sevOf(c.severity).resHrs*0.25) return {label:"Due in "+Math.round(left)+"h", tone:"p-warn"};
+  return {label:Math.round(left)+"h left", tone:"p-ok"};
+}
+function ageLabel(c){ const h=ageH(c); return h<48 ? Math.round(h)+"h" : Math.round(h/24)+"d"; }
+
+function log(c, action, detail){
+  const e = {at:iso(NOW), by:state.user+" ("+state.role+")", action, detail:detail||""};
+  c.audit.push(e);
+  DB.audit.unshift(Object.assign({ref:c.id}, e));
+}
+function mail(c, key, extra){
+  const t = TEMPLATES.find(t=>t.key===key); if(!t) return;
+  const map = Object.assign({
+    ref:c.id, customer:c.customer.name, severity:c.severity, category:c.category,
+    respSla:sevOf(c.severity).respHrs, assignee:c.assignee||"—", due:fmtD(dueAt(c)),
+    batch:c.trace.batch, plant:c.trace.plant, resolution:c.resolution?.text||"—"
+  }, extra||{});
+  const fill = s => s.replace(/\{\{(\w+)\}\}/g, (_,k)=> map[k]!=null?map[k]:"—");
+  c.outbox.push({at:iso(NOW), to:c.customer.email||"internal", subject:fill(t.subject), body:fill(t.body), key});
+}
+function save(){ try{ localStorage.setItem(LS_KEY, JSON.stringify({v:SEED_VERSION, cases:DB.cases, seq:DB.seq, audit:DB.audit.slice(0,400)})); }catch(e){} }
+function load(){ try{
+  const r=localStorage.getItem(LS_KEY); if(!r) return false;
+  const d=JSON.parse(r); if(!d||!Array.isArray(d.cases)||!d.cases.length) return false;
+  if(d.v!==SEED_VERSION) return false;          // demo data from an older build — reseed
+  DB=d; DB.audit=DB.audit||[]; return true;
+}catch(e){ return false; } }
+function nextId(type){
+  if(type==="Feedback"){ DB.seq.F++; return "FBK-2026-"+String(DB.seq.F).padStart(4,"0"); }
+  DB.seq.C++; return "CMP-2026-"+String(DB.seq.C).padStart(4,"0");
+}
+function toast(msg){
+  const old=document.querySelector(".toast"); if(old) old.remove();
+  const t=document.createElement("div"); t.className="toast"; t.textContent=msg; document.body.appendChild(t);
+  setTimeout(()=>t.remove(), 2600);
+}
+
+
+/* ---- Defect illustrations (schematic, drawn — stand in for consumer photos) ---- */
+const PHOTO_BG="#e8e3da", PHOTO_GLASS="#7d8f6f", PHOTO_GLASS2="#5d6d52", PHOTO_LABEL="#f2ece1", PHOTO_CAP="#8c6b3f";
+function svgURI(inner,w,h){ return "data:image/svg+xml;charset=utf-8,"+encodeURIComponent(
+  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+w+' '+h+'" width="'+w+'" height="'+h+'">'+inner+'</svg>'); }
+function bottleBody(fillTop, glass){
+  glass=glass||PHOTO_GLASS;
+  return '<path d="M78 34 h44 v26 l14 26 v128 a10 10 0 0 1 -10 10 h-52 a10 10 0 0 1 -10 -10 v-128 l14 -26 z" fill="'+glass+'"/>'+
+         '<path d="M78 34 h14 v26 l-14 26 v128 a10 10 0 0 0 6 9 h-6 a10 10 0 0 1 -10 -10 v-127 l14 -26 z" fill="#ffffff" opacity="0.18"/>'+
+         '<rect x="76" y="18" width="48" height="20" rx="3" fill="'+PHOTO_CAP+'"/>'+
+         '<rect x="76" y="30" width="48" height="5" fill="#000" opacity="0.18"/>'+
+         (fillTop!=null?'<rect x="66" y="'+fillTop+'" width="68" height="'+(214-fillTop)+'" fill="#000" opacity="0.13"/>':'')+
+         '<rect x="66" y="118" width="68" height="62" rx="2" fill="'+PHOTO_LABEL+'"/>'+
+         '<rect x="72" y="128" width="42" height="5" rx="2" fill="#9a8f7c"/>'+
+         '<rect x="72" y="140" width="54" height="3" rx="1.5" fill="#c3b9a6"/>'+
+         '<rect x="72" y="148" width="34" height="3" rx="1.5" fill="#c3b9a6"/>';
+}
+function ring(x,y,r){ return '<circle cx="'+x+'" cy="'+y+'" r="'+r+'" fill="none" stroke="#c0392b" stroke-width="3"/>'; }
+function frame(inner){ return '<rect width="200" height="260" fill="'+PHOTO_BG+'"/>'+
+  '<rect x="0" y="200" width="200" height="60" fill="#000" opacity="0.05"/>'+inner; }
+const PHOTOS={
+  sediment:()=>svgURI(frame(bottleBody()+ 
+    '<g fill="#2b2118">'+[[88,196,2.2],[96,201,1.6],[104,198,2.6],[110,203,1.4],[92,205,1.9],[118,199,1.5],[100,207,2.1]]
+      .map(d=>'<circle cx="'+d[0]+'" cy="'+d[1]+'" r="'+d[2]+'"/>').join("")+'</g>'+ring(101,201,26)),200,260),
+  fibre:()=>svgURI(frame(bottleBody()+
+    '<path d="M84 150 q12 14 6 28 q-6 12 10 20" fill="none" stroke="#efe9dd" stroke-width="2.2" stroke-linecap="round"/>'+ring(94,178,26)),200,260),
+  lowfill:()=>svgURI(frame(bottleBody(104)+
+    '<line x1="52" y1="86" x2="148" y2="86" stroke="#1c7a5b" stroke-width="2" stroke-dasharray="5 4"/>'+
+    '<text x="12" y="82" font-family="monospace" font-size="11" fill="#1c7a5b">spec</text>'+
+    '<line x1="52" y1="104" x2="148" y2="104" stroke="#c0392b" stroke-width="2"/>'+
+    '<text x="12" y="118" font-family="monospace" font-size="11" fill="#c0392b">actual</text>'+
+    '<path d="M156 86 L156 104" stroke="#c0392b" stroke-width="2"/>'+
+    '<text x="162" y="99" font-family="monospace" font-size="11" fill="#c0392b">15mm</text>'),200,260),
+  capleak:()=>svgURI(frame(bottleBody()+
+    '<path d="M124 40 q10 8 8 16 q-2 7 -9 6" fill="none" stroke="#c9a227" stroke-width="2.4" stroke-linecap="round"/>'+
+    '<ellipse cx="132" cy="66" rx="4" ry="6" fill="#c9a227" opacity="0.8"/>'+
+    '<path d="M76 26 h48" stroke="#c0392b" stroke-width="2" stroke-dasharray="4 3"/>'+ring(112,40,28)),200,260),
+  label:()=>svgURI(frame(
+    '<path d="M78 34 h44 v26 l14 26 v128 a10 10 0 0 1 -10 10 h-52 a10 10 0 0 1 -10 -10 v-128 l14 -26 z" fill="'+PHOTO_GLASS+'"/>'+
+    '<rect x="76" y="18" width="48" height="20" rx="3" fill="'+PHOTO_CAP+'"/>'+
+    '<g transform="rotate(-9 100 149)"><rect x="66" y="118" width="68" height="62" rx="2" fill="'+PHOTO_LABEL+'"/>'+
+    '<rect x="72" y="128" width="42" height="5" rx="2" fill="#9a8f7c"/><rect x="72" y="140" width="54" height="3" fill="#c3b9a6"/></g>'+
+    '<path d="M132 122 q10 6 4 16" fill="none" stroke="#b3a58c" stroke-width="2"/>'+ring(100,148,40)),200,260),
+  chip:()=>svgURI(frame(bottleBody()+
+    '<path d="M104 18 l10 6 l-4 8 l-9 -5 z" fill="'+PHOTO_BG+'"/>'+
+    '<path d="M104 18 l10 6" stroke="#fff" stroke-width="1.4" opacity="0.7"/>'+ring(108,26,20)),200,260),
+  hologram:()=>svgURI(frame(bottleBody()+
+    '<rect x="70" y="66" width="60" height="26" rx="2" fill="#dfe6ea"/>'+
+    '<rect x="74" y="70" width="22" height="18" rx="2" fill="#a9c4d4"/>'+
+    '<path d="M96 66 l6 26" stroke="'+PHOTO_GLASS+'" stroke-width="4"/>'+
+    '<text x="102" y="84" font-family="monospace" font-size="9" fill="#5b6b74">EX/••••</text>'+ring(100,79,28)),200,260),
+  carton:()=>svgURI(frame(
+    '<path d="M40 96 l60 -26 l60 26 v96 l-60 26 l-60 -26 z" fill="#b99a70"/>'+
+    '<path d="M40 96 l60 26 l60 -26" fill="none" stroke="#8c7350" stroke-width="2"/>'+
+    '<path d="M100 122 v96" stroke="#8c7350" stroke-width="2"/>'+
+    '<path d="M40 96 l30 -13 l24 40 l-54 -13 z" fill="#8c7350"/>'+
+    '<rect x="112" y="140" width="34" height="22" rx="2" fill="#efe6d6"/>'+ring(62,110,30)),200,260),
+  offtaste:()=>svgURI(frame(bottleBody()+
+    '<rect x="76" y="10" width="48" height="10" rx="2" fill="#c0392b" opacity="0.25"/>'+
+    '<path d="M138 44 q10 -10 4 -22" fill="none" stroke="#8a8f7a" stroke-width="2" stroke-dasharray="3 3"/>'+
+    '<path d="M148 52 q12 -12 5 -26" fill="none" stroke="#8a8f7a" stroke-width="2" stroke-dasharray="3 3"/>'+
+    '<text x="150" y="76" font-family="monospace" font-size="10" fill="#6b7280">odour</text>'+ring(100,28,26)),200,260),
+  doc:()=>svgURI('<rect width="200" height="260" fill="#f4f2ee"/><rect x="26" y="20" width="148" height="216" rx="3" fill="#fff" stroke="#d9d4ca"/>'+
+    '<rect x="42" y="42" width="70" height="8" rx="2" fill="#b0a housing"/>'.replace(' housing','')+
+    '<rect x="42" y="64" width="116" height="4" fill="#ddd8ce"/><rect x="42" y="76" width="116" height="4" fill="#ddd8ce"/><rect x="42" y="88" width="80" height="4" fill="#ddd8ce"/>'+
+    '<rect x="42" y="112" width="116" height="4" fill="#ddd8ce"/><rect x="42" y="124" width="96" height="4" fill="#ddd8ce"/>'+
+    '<rect x="42" y="176" width="116" height="1" fill="#c9c3b8"/><rect x="42" y="190" width="60" height="4" fill="#ddd8ce"/>',200,260)
+};
+function photo(kind){ const f=PHOTOS[kind]; return f?f():PHOTOS.doc(); }
+
+/* ============================ SEED ============================ */
+const NAMES=["Rohit Sharma","Anita Pillai","Mohammed Arif","Deepa Nair","Sandeep Gowda","Farhan Qureshi","Kavita Joshi","Tarun Bose","Sneha Reddy","Amit Chauhan","Preeti Malhotra","Vikram Sethi","Lalita D'Souza","Harish Kamble","Nandini Rao","Sameer Zaidi","Jaya Krishnan","Ravi Patil","Meera Saxena","Anand Varma","Ritu Bhandari","Salim Khan"];
+const CITIES=[["Pune","Maharashtra","411045"],["Hyderabad","Telangana","500081"],["Bengaluru","Karnataka","560038"],["Nagpur","Maharashtra","440010"],["Chennai","Tamil Nadu","600096"],["Goa","Goa","403001"],["Indore","Madhya Pradesh","452010"],["Kochi","Kerala","682024"],["Mumbai","Maharashtra","400072"],["Nashik","Maharashtra","422009"]];
+const OUTLETS=["Sunrise Wines & Spirits","City Liquor Mart","Grand Bazaar Off-Shop","Coastline Beverages","Metro Wine Gallery","Riverside Wine Shop","Airport Duty Paid Store"];
+const ROOTS=["Filler nozzle drip guard on Line 3 not cleaned at changeover; carry-over of rinse residue.","Capping head 4 torque drifted to 9.1 kgf-cm against a 12–14 kgf-cm specification.","Label gum viscosity out of specification in supplier lot LG-2246; adhesion failed above 32 °C.","Bottle neck-finish variation in incoming glass lot GL-8871 caused an inconsistent seal.","Batch coder head misaligned after ribbon change; print struck the shoulder radius.","Retailer stored stock above 40 °C adjacent to a compressor exhaust; no plant deviation found.","Tamper-evident band shows re-application marks — refill in genuine packaging by a third party.","Carton compression strength below spec on a single pallet handled by the transporter."];
+
+function mkCase(o){
+  const b = BRANDS[o.b], v = b.variants[o.v||0], loc = CITIES[o.loc%CITIES.length];
+  const created = addH(NOW, -o.ageH);
+  const c = {
+    id:o.id, type:o.type||"Complaint", createdAt:iso(created), channel:o.ch||"Active QR",
+    customer:{name:NAMES[o.n%NAMES.length], mobile:"98"+String(10000000+((o.n*748393)%89999999)).slice(0,8), email:NAMES[o.n%NAMES.length].split(" ")[0].toLowerCase()+"."+NAMES[o.n%NAMES.length].split(" ")[1].toLowerCase().replace(/[^a-z]/g,"")+"@example.in", city:loc[0], state:loc[1], pin:loc[2]},
+    product:{brand:b.name, cat:b.cat, variant:v.v, sku:v.sku, pack:v.pack},
+    trace:{batch:o.batch, mfgDate:iso(addH(created, -24*(o.mfgAgo||90))), plant:PLANTS[o.p]},
+    purchase:{date:iso(addH(created,-24*(o.buyAgo||6))), outlet:OUTLETS[o.n%OUTLETS.length], location:loc[0]+", "+loc[1], invoice:"INV/"+(2200+o.n*7)},
+    category:o.cat, severity:o.sev, priority:o.sev==="Critical"?"P1":o.sev==="Major"?"P2":"P3",
+    description:o.desc, rating:o.rating||null,
+    evidence:o.ev? o.ev.map(n=>{ const nm=Array.isArray(n)?n[0]:n, k=Array.isArray(n)?n[1]:(nm.endsWith(".pdf")?"doc":null);
+      return {name:nm, kind:nm.endsWith(".pdf")?"doc":"image", dataUrl:k?photo(k):null}; }) : [],
+    status:o.status, department:o.dept||null, assignee:o.assignee||null,
+    investigation:[], rca:null, capa:[], resolution:null, closure:null,
+    escalated:!!o.esc, hold:!!o.hold, outbox:[], audit:[], duplicateOf:o.dup||null
+  };
+  const stamp = (h,by,action,detail)=>{ const e={at:iso(addH(created,h)),by,action,detail:detail||""}; c.audit.push(e); DB.audit.push(Object.assign({ref:c.id},e)); };
+  stamp(0,"Customer portal","Registered", c.type+" received via "+c.channel);
+  c.outbox.push({at:iso(created), to:c.customer.email, subject:"We have received your complaint — "+c.id, body:"Reference "+c.id+" registered.", key:"ACK"});
+  const si = STATUS_FLOW.indexOf(c.status);
+  if(si>=1) stamp(2,"R. Deshmukh (Customer Care Executive)","Classified",c.category+" / "+c.severity);
+  if(si>=2) stamp(3,"R. Deshmukh (Customer Care Executive)","Assigned","Routed to "+c.department+" — "+c.assignee);
+  if(si>=2 && o.inv){ o.inv.forEach((t,i)=> { const e = typeof t==="string" ? {tool:"note", text:t, data:{}} : t; c.investigation.push(Object.assign({at:iso(addH(created, 8+i*14)), by:c.assignee, attachments:[]}, e)); stamp(8+i*14, c.assignee+" (QA/QC User)", INV_TOOLS[e.tool].name+" recorded", e.text.slice(0,60)+"…"); }); }
+  if(si>=3 && o.root!=null){
+    c.rca={rootCause:ROOTS[o.root], at:iso(addH(created,30)), by:c.assignee, cause:o.causeCat||"Process", review: si>=4 ? {status:"Reviewed", by:"K. Suresh", at:iso(addH(created,34)), comment:"Cause verified against retained sample and line records."} : null};
+    if(si>=4) stamp(34,"K. Suresh (QA Manager)","RCA reviewed","Cause verified against retained sample and line records.");
+    stamp(30, c.assignee+" (QA/QC User)","RCA recorded", (o.causeCat||"Process")+" cause identified");
+    (o.capa||[]).forEach((a,i)=>{
+      c.capa.push({kind:a[0], action:a[1], owner:a[2], target:iso(addH(created,24*a[3])), status:a[4]||"Open", effectiveness:a[5]||null});
+      stamp(31+i, c.assignee+" (QA/QC User)", a[0]==="CA"?"Corrective action raised":"Preventive action raised", a[1].slice(0,58)+"…");
+    });
+  }
+  if(si>=5 && o.res){ c.resolution={text:o.res, at:iso(addH(created,o.resAt||60)), by:c.assignee, approvedBy:"K. Suresh"}; stamp(o.resAt||60,"K. Suresh (QA Manager)","Resolved","Resolution approved and communicated"); }
+  if(si>=6){ c.closure={at:iso(addH(created,o.closeAt||(o.resAt||60)+8)), by:"R. Deshmukh", customerConfirmed:true}; stamp(o.closeAt||(o.resAt||60)+8,"R. Deshmukh (Customer Care Executive)","Closed","Customer confirmation received"); c.outbox.push({at:c.closure.at,to:c.customer.email,subject:"Your complaint "+c.id+" has been resolved",body:o.res||"Closed.",key:"CLOSURE"}); }
+  if(c.escalated) stamp(sevOf(c.severity).resHrs+1,"System","Escalated","Resolution SLA breached — escalated to QA Manager");
+  DB.cases.push(c);
+  return c;
+}
+
+function seed(){
+  DB={cases:[],seq:{C:0,F:0},audit:[]};
+  const S = [
+   /* ---------- 1. Sediment · 5 Whys · CLOSED ---------- */
+   {id:"CMP-2026-0001",b:0,v:0,n:0,loc:0,p:0,ageH:1180,batch:"KR/AUR/26/0412",cat:"Foreign particle / sediment",sev:"Critical",status:"Closed",dept:"Quality Assurance",assignee:"A. Menon",
+    desc:"Fine dark specks visible near the base of the bottle when held against light. Bottle was sealed and unopened.",
+    ev:[["bottle_base.jpg","sediment"],["invoice.pdf","doc"]],
+    inv:[{tool:"gemba", text:"Particulate is rinse-water salt, not glass.", data:{location:"Line 3 filler, Aurangabad Unit-1",records:"CIP log, changeover checklist, retained sample KR/AUR/26/0412",observed:"Complaint bottle under lightbox shows off-white crystalline specks; retained sample from the same batch is clear. Drip tray under the nozzle bank carries a dried white deposit.",deviation:"Drip guards not cleaned at the 06:40 SKU changeover; checklist line left unsigned."}},
+         {tool:"5why", text:"Drip-guard cleaning is not a signed step in the changeover SOP.", data:{problem:"Crystalline particulate in sealed 750 ml bottles from batch KR/AUR/26/0412.",whys:["Dried rinse-water salt fell from the nozzle drip guard into open bottles.","The drip guard was not cleaned during the SKU changeover.","The operator did not treat it as part of the changeover.","The changeover checklist does not list drip-guard cleaning as a step.","The SOP was written before the drip guards were retrofitted in 2024."],conclusion:"Drip-guard cleaning is missing from the changeover SOP, so it depends on operator memory."}}],
+    root:0,causeCat:"Process",
+    capa:[["CA","Line 3 stopped and drip guards cleaned; 620 bottles of the affected window quarantined and re-inspected.","V. Rathod",3,"Completed","Verified by K. Suresh on 21 Aug 2026"],
+          ["PA","Changeover SOP amended to include a signed-off drip-guard clean at every SKU change on Lines 1–4.","K. Suresh",21,"Completed","Verified by K. Suresh on 02 Sep 2026"]],
+    res:"The particulate was confirmed as harmless rinse-water residue, not glass. Line 3 was stopped and cleaned, 620 bottles from the affected window were re-inspected, and the changeover procedure now requires a signed drip-guard clean. A replacement bottle has been dispatched.",resAt:96,closeAt:120},
+
+   /* ---------- 2. Cap leakage · 5 Whys + Gemba · CLOSED ---------- */
+   {id:"CMP-2026-0002",b:1,v:0,n:1,loc:1,p:2,ageH:960,batch:"AX/HYD/26/1188",cat:"Cap or seal leakage",sev:"Major",status:"Closed",dept:"Bottling & Production",assignee:"V. Rathod",
+    desc:"Bottle leaked in the carry bag on the way home. Cap turns loosely without breaking the seal band.",
+    ev:[["cap_closeup.jpg","capleak"]],
+    inv:[{tool:"gemba", text:"Head 4 torque 9.1 kgf·cm against a 12–14 spec.", data:{location:"Line 2 capper, Hyderabad Unit-3",records:"Torque log 12 Aug, changeover checklist, capper PM history",observed:"Head 4 read 9.1 kgf·cm across 10 consecutive bottles; heads 1–3 within specification. Shift torque log shows a single reading taken at 22:00.",deviation:"Head 4 below the 12–14 kgf·cm specification for an estimated 6 hours of the run."}},
+         {tool:"5why", text:"Capper SOP has no in-process torque verification.", data:{problem:"Caps on AX/HYD/26/1188 turn freely with the seal band intact; product leaked in transit.",whys:["Cap applied below the 12–14 kgf·cm torque specification.","Capping head 4 drifted low from 14:20 onwards.","The drift went unnoticed for the remainder of the shift.","Torque is only verified at shift end, not during the run.","The capper SOP has no in-process verification step."],conclusion:"No hourly in-process torque verification exists, so a drifting head runs uncorrected until shift end."}}],
+    root:1,causeCat:"Equipment",
+    capa:[["CA","Head 4 re-calibrated and torque re-validated across 30 consecutive bottles.","V. Rathod",2,"Completed","Verified by K. Suresh on 30 Jul 2026"],
+          ["PA","Hourly torque verification with automatic logging introduced on all four heads; added to the capper SOP.","V. Rathod",30,"Completed","Verified by K. Suresh on 26 Aug 2026"]],
+    res:"A capping head had drifted below the torque specification during the shift and was corrected. Hourly torque verification is now logged automatically on every head. A replacement bottle has been issued.",resAt:88,closeAt:110},
+
+   /* ---------- 3. Label defect · Fishbone 6M · CLOSED ---------- */
+   {id:"CMP-2026-0003",b:2,v:0,n:2,loc:2,p:1,ageH:640,batch:"SR/NSK/26/0733",cat:"Label defect / misprint",sev:"Minor",status:"Closed",dept:"Packaging",assignee:"N. Bhatt",
+    desc:"Back label peeling away at both edges. Bottle was bought two days ago and stored indoors.",
+    ev:[["label_peel.jpg","label"]],
+    inv:[{tool:"6m", text:"Material — adhesive lot LG-2246 out of specification.", data:{m:{man:"Labeller operator certified; no changeover during the affected window.",machine:"Labeller glue-pot temperature 58 °C, within the 55–62 °C band. Roller pressure logged in spec.",material:"Supplier label lot LG-2246. Adhesion test repeated at 32 °C fails at 1.9 N/25 mm against a 3.0 N minimum.",method:"Application method unchanged since 2024; no deviation raised.",measurement:"Incoming inspection covers print quality and dimensions only — no adhesion test.",env:"Warehouse 29 °C during the run; retail storage ambient, no heat source reported."},likely:"Material — the adhesive in supplier lot LG-2246 is below specification above 30 °C, and incoming inspection does not test for it."}}],
+    root:2,causeCat:"Material",
+    capa:[["CA","Remaining LG-2246 label stock quarantined and returned to the supplier with the test report.","N. Bhatt",5,"Completed","Verified by K. Suresh on 20 Aug 2026"],
+          ["PA","Incoming label inspection now includes a hot-room adhesion test at 32 °C on every lot.","N. Bhatt",25,"Completed","Verified by K. Suresh on 01 Sep 2026"]],
+    res:"The label adhesive supplied in one lot fell below specification at warm temperatures. That stock has been withdrawn and incoming inspection now includes a heat adhesion test. A replacement bottle has been provided.",resAt:130,closeAt:150},
+
+   /* ---------- 4. Off-odour · Is/Is-Not · PENDING APPROVAL (live demo) ---------- */
+   {id:"CMP-2026-0004",b:0,v:2,n:3,loc:3,p:0,ageH:420,batch:"KRB/AUR/26/0501",cat:"Off-taste / off-odour",sev:"Critical",status:"Pending Approval",dept:"Quality Assurance",assignee:"P. Iyer",
+    desc:"Distinct musty, cardboard-like note on the nose. Second bottle from the same shop had the same smell.",
+    ev:[["bottle_front.jpg","offtaste"],["seal.jpg","hologram"]],
+    inv:["Sensory panel of five convened under ISO 8589 conditions; three of five detect a musty, TCA-like note in the complaint sample. Retained sample scored clean by all five.",
+         {tool:"isnot", text:"Defect follows the closure lot, not the spirit batch.", data:{rows:{what:{is:"Musty / cardboard note (TCA-like)",not:"Sourness, sulphur or solvent notes"},where:{is:"Two bottles, one outlet, Nagpur",not:"Plant retained sample from the same batch"},when:{is:"Closure lot CL-7712, bottled 12 Aug night shift",not:"Earlier closure lots on the same spirit batch"},extent:{is:"2 of 2 bottles opened at the outlet",not:"Any of the 5 library samples"}},observation:"Both complaint bottles carry closure lot CL-7712; the clean retained sample used the previous lot. The variable is the closure liner, not the blend."}},
+         {tool:"gemba", text:"Liner lot sent for external TCA screening.", data:{location:"Closure store, Aurangabad Unit-1",records:"Closure GRN, supplier CoA for CL-7712, bottling log 12 Aug",observed:"CL-7712 stored on a pallet adjacent to a chlorinated-cleaner drum in the same aisle. Supplier CoA carries no TCA result.",deviation:"No TCA screening clause in the closure-liner incoming specification; incompatible storage adjacency."}}],
+    root:3,causeCat:"Material",
+    capa:[["CA","Closure lot CL-7712 placed on hold pending the external NABL TCA screening report.","P. Iyer",4,"Completed",null],
+          ["PA","Add a TCA screening clause to the closure-liner incoming specification and separate chlorinated cleaners from the closure store.","K. Suresh",40,"In Progress",null]]},
+
+   /* ---------- 5. Counterfeit · Is/Is-Not · RCA & CAPA, awaiting review (live demo) ---------- */
+   {id:"CMP-2026-0005",b:3,v:0,n:4,loc:4,p:3,ageH:300,batch:"OF/BLG/26/0290",cat:"Suspected counterfeit / tamper",sev:"Critical",status:"RCA & CAPA",dept:"Quality Assurance",assignee:"A. Menon",
+    desc:"Hologram on the excise label looks flat and the tamper band appears re-glued. Contents taste thin and watery.",
+    ev:[["hologram.jpg","hologram"],["band.jpg","capleak"],["receipt.pdf","doc"]],
+    inv:[{tool:"isnot", text:"Genuine packaging, non-genuine contents.", data:{rows:{what:{is:"Flat hologram, re-applied band, thin spirit",not:"Any defect in glass, label print or carton"},where:{is:"One outlet in Panaji",not:"Other outlets supplied from the same dispatch"},when:{is:"Excise serial outside the dispatch register range",not:"Serials recorded against batch OF/BLG/26/0290"},extent:{is:"Single bottle presented",not:"Any bottle traced to our dispatch"}},observation:"Packaging is genuine but the excise serial does not belong to this batch — consistent with a refill in recovered packaging rather than a plant defect."}},
+         "Band examined under magnification: solvent marks consistent with removal and re-application. ABV of the contents measured at 31.2% against a 42.8% specification. Case flagged to Legal and to the State Excise liaison."],
+    root:6,causeCat:"External",
+    capa:[["CA","Outlet details shared with the Excise liaison; market surveillance requested for the district.","K. Suresh",7,"In Progress",null],
+          ["PA","Roll out a serialised second-layer QR under the neck seal for the Old Ferry range.","K. Suresh",60,"Open",null]],
+    esc:true},
+
+   /* ---------- 6. Low fill · 5 Whys · CLOSED ---------- */
+   {id:"CMP-2026-0006",b:0,v:1,n:5,loc:5,p:0,ageH:530,batch:"KR/AUR/26/0644",cat:"Low fill level / short volume",sev:"Major",status:"Closed",dept:"Bottling & Production",assignee:"V. Rathod",
+    desc:"Fill level sits roughly 15 mm below the shoulder. A neighbouring bottle on the shelf was visibly fuller.",
+    ev:[["fill_level.jpg","lowfill"]],
+    inv:[{tool:"gemba", text:"Valve 6 delivering 368 ml against a 375 ml target.", data:{location:"Line 1 filler, Aurangabad Unit-1",records:"Fill-volume chart 03 Aug, filler PM history, net-content check sheet",observed:"Ten bottles drawn from valve 6 averaged 368.4 ml; the other 11 valves averaged 375.1 ml. Valve 6 seal shows a compression set.",deviation:"Valve 6 outside the 373–377 ml control band; net-content checks sample the line, not each valve."}},
+         {tool:"5why", text:"Filler valve seals are not on the PM schedule.", data:{problem:"375 ml bottles from KR/AUR/26/0644 filled ~7 ml short.",whys:["Filler valve 6 closed slowly, cutting the fill volume.","The valve seal had taken a compression set.","The seal had run 14 months without replacement.","Filler valve seals are not listed on the preventive-maintenance schedule.","The PM schedule was built from the OEM manual, which lists seals as consumables without an interval."],conclusion:"Filler valve seals were never given a replacement interval on the PM schedule, so they run to failure."}}],
+    root:4,causeCat:"Equipment",
+    capa:[["CA","Valve 6 seal replaced and the line re-validated; 340 bottles from the affected window checked for net content.","V. Rathod",2,"Completed","Verified by K. Suresh on 16 Aug 2026"],
+          ["PA","All filler valve seals added to the PM schedule at a 6-month interval across Lines 1–4.","V. Rathod",28,"Completed","Verified by K. Suresh on 03 Sep 2026"]],
+    res:"A worn filler valve seal was under-filling one of twelve valves. The seal has been replaced, the affected window checked, and valve seals are now on a six-month preventive-maintenance interval. A replacement bottle has been dispatched.",resAt:96,closeAt:118},
+
+   /* ---------- 7. Chipped neck · Fishbone 6M · CLOSED ---------- */
+   {id:"CMP-2026-0007",b:4,v:0,n:6,loc:6,p:1,ageH:470,batch:"NL/NSK/26/0812",cat:"Broken or chipped bottle",sev:"Major",status:"Closed",dept:"Packaging",assignee:"N. Bhatt",
+    desc:"Chip on the rim of the bottle neck, found after removing the cap. No damage to the outer carton.",
+    ev:[["neck_chip.jpg","chip"]],
+    inv:[{tool:"6m", text:"Machine — capper infeed star wheel out of alignment.", data:{m:{man:"Operator certified; no relief operator on the shift.",machine:"Capper infeed star wheel 1.8 mm out of centre; bottles contacting the guide rail at the neck finish.",material:"Glass lot GL-8871 neck-finish dimensions within supplier tolerance on all 20 samples checked.",method:"No changeover or line-speed change during the affected window.",measurement:"Empty-bottle inspection covers body cracks; the neck rim is not a checkpoint.",env:"No abnormal vibration or temperature recorded."},likely:"Machine — star wheel misalignment chipping the neck rim at the capper infeed, undetected because the rim is not an inspection point."}}],
+    root:3,causeCat:"Equipment",
+    capa:[["CA","Star wheel re-centred and the guide rail re-set; 900 bottles from the run inspected at the neck rim.","N. Bhatt",3,"Completed","Verified by K. Suresh on 22 Aug 2026"],
+          ["PA","Neck-rim check added to the empty-bottle inspection sheet and to the weekly capper alignment check.","N. Bhatt",21,"Completed","Verified by K. Suresh on 31 Aug 2026"]],
+    res:"A misaligned star wheel at the capper infeed was chipping the neck rim. The machine has been re-set, the run inspected, and the neck rim is now a formal inspection point. A replacement bottle has been issued.",resAt:104,closeAt:126},
+
+   /* ---------- 8. Batch code · 5 Whys · CLOSED ---------- */
+   {id:"CMP-2026-0008",b:1,v:1,n:7,loc:7,p:2,ageH:390,batch:"AX/HYD/26/1301",cat:"Batch code illegible",sev:"Minor",status:"Closed",dept:"Bottling & Production",assignee:"V. Rathod",
+    desc:"Batch and manufacturing date printed on the shoulder are smudged and unreadable.",
+    ev:[["batch_code.jpg","doc"]],
+    inv:[{tool:"5why", text:"No first-article print check after a ribbon change.", data:{problem:"Batch code and mfg. date on AX/HYD/26/1301 unreadable on the shoulder.",whys:["The coder printed onto the shoulder radius instead of the flat.","The coder head sat 4 mm low after the ribbon change.","Head height is re-set by eye after every ribbon change.","Nothing verifies the first bottle printed after a change.","The coder SOP ends at 'replace ribbon' with no print verification step."],conclusion:"There is no first-article print check after a ribbon change, so a mis-set head runs until someone notices."}}],
+    root:4,causeCat:"Process",
+    capa:[["CA","Coder head re-aligned and the affected pallet over-coded on the flat panel.","V. Rathod",6,"Completed","Verified by K. Suresh on 25 Aug 2026"]],
+    res:"The batch coder had been left low after a ribbon change. The head has been re-aligned, the affected stock over-coded, and a first-article print check is now mandatory after every ribbon change.",resAt:100,closeAt:118},
+
+   /* ---------- 9. Off-taste, no plant fault · Is/Is-Not + Gemba · CLOSED ---------- */
+   {id:"CMP-2026-0016",b:3,v:0,n:15,loc:5,p:3,ageH:290,batch:"OF/BLG/26/0301",cat:"Off-taste / off-odour",sev:"Critical",status:"Closed",dept:"Quality Assurance",assignee:"A. Menon",
+    desc:"Flat, oxidised taste. Bottle had been standing on a shelf near a window at the shop.",
+    ev:[["bottle_shelf.jpg","offtaste"]],
+    inv:[{tool:"isnot", text:"Fault is at the outlet, not in the batch.", data:{rows:{what:{is:"Flat, oxidised character; colour slightly darkened",not:"Musty, sulphury or solvent notes"},where:{is:"One outlet in Panaji, display shelf by the window",not:"Two other outlets on the same dispatch"},when:{is:"Bottle on display since June",not:"Stock drawn from the same outlet's back store"},extent:{is:"Display-shelf stock only",not:"Sealed cases in the same outlet"}},observation:"The distinguishing variable is display position and time on shelf, not the batch — points to retail storage rather than production."}},
+         {tool:"gemba", text:"Display shelf measured at 43 °C.", data:{location:"Retail outlet, Panaji",records:"Dispatch record, outlet stock rotation, retained sample results",observed:"Display shelf sits beside a compressor exhaust in direct afternoon sun; surface temperature 43 °C at 15:00. Retained sample within specification on colour, ABV and sensory panel.",deviation:"Storage well above the 25 °C guidance on the trade kit; no plant deviation found."}}],
+    root:5,causeCat:"External",
+    capa:[["CA","Replacement issued; retailer advised in writing on storage conditions and shelf position.","R. Deshmukh",3,"Completed","Verified by K. Suresh on 27 Aug 2026"],
+          ["PA","Storage guidance card added to the trade kit for all Old Ferry outlets in the region; field team briefed.","K. Suresh",30,"Completed","Verified by K. Suresh on 04 Sep 2026"]],
+    res:"Testing found no fault with the batch — the plant retained sample was within specification. The deterioration was traced to retail storage above 40 °C in direct sun. A replacement has been issued and the retailer has been given written storage guidance.",resAt:70,closeAt:92},
+
+   /* ---------- 10. Carton damage · Fishbone 6M · CLOSED ---------- */
+   {id:"CMP-2026-0017",b:0,v:1,n:16,loc:6,p:0,ageH:520,batch:"KR/AUR/26/0455",cat:"Broken or chipped bottle",sev:"Major",status:"Closed",dept:"Packaging",assignee:"N. Bhatt",
+    desc:"Two bottles in a sealed outer case had cracked shoulders. The carton corner was crushed on arrival.",
+    ev:[["carton_damage.jpg","carton"],["cracked_bottle.jpg","chip"]],
+    inv:[{tool:"6m", text:"Material — partition inserts under specification.", data:{m:{man:"Packing crew certified; case sealed and palletised normally.",machine:"Case erector and sealer within settings; no jam recorded.",material:"Partition inserts from lot PI-3390 measured 0.4 mm under the 3.0 mm board specification; compression strength 18% below the standard.",method:"Palletising pattern unchanged; stretch wrap tension in spec.",measurement:"Insert board thickness is not measured on receipt — only visual condition.",env:"Transporter reported no incident; pallet in the third tier."},likely:"Material — under-specification partition board allowed bottle-to-bottle contact when the pallet was compressed in transit."}}],
+    root:7,causeCat:"Material",
+    capa:[["CA","Insert lot PI-3390 withdrawn from the packing hall and returned to the supplier.","N. Bhatt",4,"Completed","Verified by K. Suresh on 18 Aug 2026"],
+          ["PA","Board thickness and compression strength added to the incoming inspection for partitions.","N. Bhatt",24,"Completed","Verified by K. Suresh on 30 Aug 2026"]],
+    res:"Carton partitions from one supplier lot were below the board specification and allowed bottle contact under pallet load. That lot has been withdrawn and incoming inspection now measures board thickness and compression strength. Both bottles have been replaced.",resAt:80,closeAt:104},
+
+   /* ---------- 11. Excise label · Gemba · RESOLVED, awaiting closure (live demo) ---------- */
+   {id:"CMP-2026-0009",b:2,v:1,n:8,loc:8,p:1,ageH:250,batch:"SRC/NSK/26/0901",cat:"Excise label / hologram issue",sev:"Major",status:"Resolved",dept:"Supply Chain",assignee:"K. Suresh",
+    desc:"Excise label is torn across the serial number, so the code cannot be read.",
+    ev:[["excise_label.jpg","hologram"]],
+    inv:[{tool:"gemba", text:"Applicator brush tearing the label edge.", data:{location:"Excise label applicator, Nashik Bottling Unit",records:"Applicator settings, excise serial register, dispatch record",observed:"Applicator brush pressure set 20% high; label edge lifting and tearing on roughly 1 in 40 bottles. Serial traced successfully in the register from the dispatch record.",deviation:"Brush pressure outside the setting sheet range; no in-line check on label integrity."}}],
+    root:4,causeCat:"Equipment",
+    capa:[["CA","Applicator brush pressure re-set and 200 bottles verified for label integrity.","N. Bhatt",4,"Completed","Verified by K. Suresh on 01 Sep 2026"]],
+    res:"The excise label applicator was set too high and was tearing labels intermittently. The setting has been corrected and the affected stock checked. The serial was traced in the excise register and the bottle is confirmed genuine.",resAt:180},
+
+   /* ---------- in-flight cases for the workflow demo ---------- */
+   {id:"CMP-2026-0010",b:3,v:1,n:9,loc:9,p:3,ageH:52,batch:"OF/BLG/26/0355",cat:"Cap or seal leakage",sev:"Major",status:"Under Investigation",dept:"Bottling & Production",assignee:"V. Rathod",
+    desc:"Slight seepage around the cap threads. The bottle was upright the whole time.",ev:[["seepage.jpg","capleak"]],
+    inv:["Torque log for the shift pulled; readings within specification. Retained sample requested from Belgaum for a seal-integrity check."],esc:true},
+
+   {id:"CMP-2026-0011",b:0,v:0,n:10,loc:0,p:0,ageH:31,batch:"KR/AUR/26/0701",cat:"Foreign particle / sediment",sev:"Critical",status:"Under Investigation",dept:"Quality Assurance",assignee:"P. Iyer",
+    desc:"A thread-like fibre floating in the liquid, visible when the bottle is turned.",ev:[["fibre.jpg","fibre"]],
+    inv:["Bottle recalled to the Aurangabad QC lab. Fibre recovered for microscopy; retained samples from the batch pulled for comparison."]},
+
+   {id:"CMP-2026-0012",b:4,v:0,n:11,loc:1,p:1,ageH:20,batch:"NL/NSK/26/0855",cat:"Outer carton damage in transit",sev:"Minor",status:"Classified",dept:"Supply Chain",assignee:null,
+    desc:"Carton arrived crushed on one corner. Bottles inside are intact but the presentation box is unusable as a gift.",ev:[["carton.jpg","carton"]]},
+
+   {id:"CMP-2026-0013",b:1,v:0,n:12,loc:2,p:2,ageH:9,batch:"AX/HYD/26/1344",cat:"Off-taste / off-odour",sev:"Critical",status:"New",dept:null,assignee:null,
+    desc:"Sharp chemical smell as soon as the cap was opened. I did not taste it.",ev:[["opened_bottle.jpg","offtaste"]]},
+
+   {id:"CMP-2026-0014",b:0,v:2,n:13,loc:3,p:0,ageH:5,batch:"KRB/AUR/26/0588",cat:"Label defect / misprint",sev:"Minor",status:"New",dept:null,assignee:null,
+    desc:"Front label is applied at an angle, roughly 10 degrees off vertical.",ev:[["label_angle.jpg","label"]]},
+
+   {id:"CMP-2026-0015",b:2,v:0,n:14,loc:4,p:1,ageH:3,batch:"SR/NSK/26/0944",cat:"Low fill level / short volume",sev:"Major",status:"New",dept:null,assignee:null,
+    desc:"Bottle appears under-filled compared to the sealed one next to it on the shelf.",ev:[["comparison.jpg","lowfill"]]},
+
+   /* duplicate of 0011 — same bottle reported twice by the same household */
+   {id:"CMP-2026-0019",b:0,v:0,n:21,loc:0,p:0,ageH:28,batch:"KR/AUR/26/0701",cat:"Foreign particle / sediment",sev:"Critical",status:"Duplicate",dept:null,assignee:null,dup:"CMP-2026-0011",
+    desc:"Reporting again — a fibre in the bottle we bought last week. My husband may have already raised this.",ev:[["fibre_2.jpg","fibre"]]},
+
+   {id:"CMP-2026-0018",b:1,v:1,n:17,loc:7,p:2,ageH:190,batch:"AX/HYD/26/1240",cat:"Batch code illegible",sev:"Minor",status:"Closed",dept:"Bottling & Production",assignee:"V. Rathod",
+    desc:"Manufacturing date is half printed.",
+    inv:["Coder alignment checked; head offset confirmed after the ribbon change. Same signature as CMP-2026-0008."],
+    root:4,causeCat:"Equipment",
+    capa:[["CA","Coder head re-aligned and first-article print check performed.","V. Rathod",6,"Completed","Verified by K. Suresh on 24 Aug 2026"]],
+    res:"The coder head was re-aligned and a first-article print verification is now performed after every ribbon change.",resAt:100,closeAt:118},
+
+   /* ---------- feedback ---------- */
+   {id:"FBK-2026-0001",type:"Feedback",b:0,v:0,n:18,loc:8,p:0,ageH:120,batch:"KR/AUR/26/0620",cat:"Off-taste / off-odour",sev:"Minor",status:"Closed",dept:"Customer Care",assignee:"S. Kulkarni",
+    desc:"The Barrel Select finish is excellent — noticeably smoother than last year. Please keep the 375 ml pack available in Kochi.",rating:5,res:"Feedback shared with the brand and supply chain teams.",resAt:20,closeAt:26},
+   {id:"FBK-2026-0002",type:"Feedback",b:2,v:1,n:19,loc:0,p:1,ageH:64,batch:"SRC/NSK/26/0890",cat:"Label defect / misprint",sev:"Minor",status:"Closed",dept:"Customer Care",assignee:"S. Kulkarni",
+    desc:"Citrus Cask is a great gin but the bottle is hard to pour without dripping. A different spout would help.",rating:4,res:"Passed to the packaging design team for the next bottle revision.",resAt:18,closeAt:24},
+   {id:"FBK-2026-0003",type:"Feedback",b:3,v:0,n:20,loc:1,p:3,ageH:12,batch:"OF/BLG/26/0360",cat:"Outer carton damage in transit",sev:"Minor",status:"New",dept:null,assignee:null,
+    desc:"Dark Reserve is my regular. The QR on the bottle is a nice touch — it took three seconds to reach this page.",rating:5}
+  ];
+  S.forEach(mkCase);
+  DB.seq.C = 19; DB.seq.F = 3;
+  DB.audit.sort((a,b)=> new Date(b.at)-new Date(a.at));
+  save();
+}
+
+
+
+
+/* ============================ REPEATS, DUPLICATES, RECURRENCE ============================ */
+const CLOSED_SET=["Closed","Rejected","Duplicate"];
+function duplicatesOf(id){ return DB.cases.filter(c=>c.duplicateOf===id); }
+function parentOf(c){ return c.duplicateOf ? DB.cases.find(x=>x.id===c.duplicateOf) : null; }
+// Candidate parents when marking a duplicate: same batch, or same SKU + category, raised earlier.
+function dupCandidates(c){
+  return DB.cases.filter(x=>x.id!==c.id && x.type==="Complaint" && !x.duplicateOf && x.status!=="Duplicate" &&
+    (x.trace.batch===c.trace.batch || (x.product.sku===c.product.sku && x.category===c.category)))
+    .sort((a,b)=> new Date(b.createdAt)-new Date(a.createdAt));
+}
+/* A repeat is the same defect on the same product raised again by a DIFFERENT consumer —
+   distinct from a duplicate, which is the same consumer/incident logged twice. */
+function repeatsFor(c){
+  const t=new Date(c.createdAt);
+  const prior=DB.cases.filter(x=>x.id!==c.id && x.type==="Complaint" && !x.duplicateOf && new Date(x.createdAt)<t);
+  const sameBatch = prior.filter(x=>x.trace.batch===c.trace.batch);
+  const sameDefect = prior.filter(x=>x.product.sku===c.product.sku && x.category===c.category && x.trace.batch!==c.trace.batch);
+  const samePlant = prior.filter(x=>x.trace.plant===c.trace.plant && x.category===c.category && x.trace.batch!==c.trace.batch && x.product.sku!==c.product.sku);
+  return {sameBatch, sameDefect, samePlant, all:[...sameBatch,...sameDefect,...samePlant]};
+}
+/* The signal that matters to QA: did this recur AFTER a preventive action was signed off as effective? */
+function capaFailure(c){
+  const r=repeatsFor(c);
+  for(const prev of [...r.sameDefect, ...r.samePlant]){
+    const pa=(prev.capa||[]).find(a=>a.kind==="PA" && a.effectiveness);
+    if(pa && prev.closure && new Date(prev.closure.at) < new Date(c.createdAt)) return {prev, pa};
+  }
+  return null;
+}
+function repeatBadge(c){
+  if(c.duplicateOf) return '<span class="pill p-mute" title="Duplicate of '+esc(c.duplicateOf)+'">DUP</span>';
+  if(capaFailure(c)) return '<span class="pill p-crit" title="Recurred after a preventive action was verified effective">REPEAT</span>';
+  const r=repeatsFor(c);
+  if(r.sameBatch.length) return '<span class="pill p-warn" title="'+r.sameBatch.length+' earlier case(s) on batch '+esc(c.trace.batch)+'">REPEAT</span>';
+  if(r.sameDefect.length>=2) return '<span class="pill p-warn" title="'+r.sameDefect.length+' earlier cases of this defect on '+esc(c.product.sku)+'">REPEAT</span>';
+  return '';
+}
+
+/* ============================ TASK MODEL — who acts next ============================ */
+function usersWith(cap){ return USERS.filter(u=>u.active&&(ROLES[u.role]||[]).includes(cap)).map(u=>u.name); }
+function qaManagers(){ return USERS.filter(u=>u.active&&u.role==="QA Manager").map(u=>u.name); }
+// The single next action on a case: what must happen, and who can do it.
+function nextTask(c){
+  if(["Closed","Rejected","Duplicate"].includes(c.status)) return null;
+  const inv = c.assignee ? [c.assignee] : [];
+  switch(c.status){
+    case "New":       return {what:"Classify the case", cap:"triage",  who:usersWith("triage"), tab:"summary"};
+    case "Classified":return {what:"Assign to an investigator", cap:"assign", who:usersWith("assign"), tab:"summary"};
+    case "Under Investigation":
+      return {what:"Record investigation findings", cap:"investigate", who:inv.length?inv:usersWith("investigate"), tab:"investigation"};
+    case "RCA & CAPA":
+      if(!c.rca) return {what:"Document the root cause", cap:"rca", who:inv.length?inv:usersWith("rca"), tab:"capa"};
+      if(!(c.rca.review&&c.rca.review.status==="Reviewed")) return {what:"Review the RCA", cap:"approve", who:qaManagers(), tab:"capa"};
+      if(!c.capa.length) return {what:"Raise a corrective / preventive action", cap:"capa", who:inv.length?inv:usersWith("capa"), tab:"capa"};
+      return {what:"Submit for approval", cap:"rca", who:inv.length?inv:usersWith("rca"), tab:"capa"};
+    case "Pending Approval": return {what:"Approve and write the resolution", cap:"approve", who:qaManagers(), tab:"summary"};
+    case "Resolved":  return {what:"Confirm with customer and close", cap:"close", who:usersWith("close"), tab:"summary"};
+  }
+  return null;
+}
+function myCaseTasks(){ return DB.cases.map(c=>({c,t:nextTask(c)})).filter(x=>x.t&&x.t.who.includes(state.user)); }
+function myCapaTasks(){ const out=[]; const appr=(ROLES[state.role]||[]).includes("approve");
+  DB.cases.forEach(c=>c.capa.forEach((a,i)=>{
+    if(a.owner===state.user&&a.status!=="Completed") out.push({c,a,i,job:"Complete this action"});
+    else if(appr&&a.status==="Completed"&&!a.effectiveness) out.push({c,a,i,job:"Verify effectiveness"});
+  })); return out; }
+function myTaskCount(){ return myCaseTasks().length + myCapaTasks().length; }
+function waitingChip(c){
+  const t=nextTask(c); if(!t) return '';
+  const many=t.who.length>1;
+  return '<span class="chip waiting" title="'+esc(t.who.join(", "))+'">Waiting on <b>'+esc(t.who[0])+(many?" +"+(t.who.length-1):"")+'</b> · '+esc(t.what)+'</span>';
+}
+
+/* ============================ INVESTIGATION TOOLS ============================ */
+const INV_TOOLS = {
+  note:{name:"Finding / note", hint:"Free-text observation"},
+  "5why":{name:"5 Whys", hint:"Drill from symptom to cause"},
+  "6m":{name:"Fishbone (6M)", hint:"Man · Machine · Material · Method · Measurement · Environment"},
+  isnot:{name:"Is / Is-Not", hint:"Bound the problem"},
+  gemba:{name:"Line / Gemba check", hint:"On-site verification"}
+};
+const SIX_M=[{k:"man",n:"Man (people)"},{k:"machine",n:"Machine"},{k:"material",n:"Material"},{k:"method",n:"Method"},{k:"measurement",n:"Measurement"},{k:"env",n:"Environment"}];
+const IS_NOT=[{k:"what",n:"What (defect)"},{k:"where",n:"Where (line / plant / market)"},{k:"when",n:"When (shift / date / batch)"},{k:"extent",n:"Extent (how many / how big)"}];
+function ta(id,label,ph,val){ return '<div class="field"><label for="'+id+'">'+label+'</label><textarea id="'+id+'" style="min-height:52px" placeholder="'+esc(ph||"")+'">'+esc(val||"")+'</textarea></div>'; }
+function invForm(tool){
+  if(tool==="note") return ta("inv_text","Finding","Findings, sample checks, line data, retained-sample comparison…");
+  if(tool==="5why") return ta("inv_problem","Problem statement","e.g. Fill level 15 mm below shoulder on batch SR/NSK/26/0944")+
+    [1,2,3,4,5].map(i=>'<div class="field"><label for="inv_why'+i+'">Why '+i+(i>2?' <span class="muted">(optional)</span>':'')+'</label><input id="inv_why'+i+'" placeholder="Because…"></div>').join("")+
+    ta("inv_conclusion","Root cause reached","The last Why that, if fixed, prevents recurrence");
+  if(tool==="6m") return '<div class="grid" style="grid-template-columns:1fr 1fr;gap:10px">'+SIX_M.map(m=>ta("inv_m_"+m.k,m.n,"Possible causes…")).join("")+'</div>'+ta("inv_likely","Most likely cause(s)","Which bone(s) the evidence points to");
+  if(tool==="isnot") return '<div class="tablewrap" style="border-radius:6px"><table style="min-width:0"><thead><tr><th></th><th>Is</th><th>Is not</th></tr></thead><tbody>'+
+    IS_NOT.map(r=>'<tr><td style="font-size:12px;color:var(--ink-2);white-space:nowrap">'+r.n+'</td><td><input id="inv_is_'+r.k+'" style="width:100%;border:1px solid var(--line);border-radius:5px;padding:5px 7px"></td><td><input id="inv_not_'+r.k+'" style="width:100%;border:1px solid var(--line);border-radius:5px;padding:5px 7px"></td></tr>').join("")+
+    '</tbody></table></div>'+ta("inv_obs","What the distinction suggests","e.g. Only 375 ml on Line 3, night shift → filler head, not bulk");
+  return '<div class="grid" style="grid-template-columns:1fr 1fr;gap:10px">'+
+    '<div class="field"><label for="inv_loc">Location checked</label><input id="inv_loc" placeholder="Line 3 filler, Nashik"></div>'+
+    '<div class="field"><label for="inv_records">Records reviewed</label><input id="inv_records" placeholder="Fill-volume chart, CIP log, torque log"></div></div>'+
+    ta("inv_observed","What was observed","Actual condition on the line / retained sample")+ta("inv_dev","Deviation from standard","Spec vs actual; none if within limits");
+}
+function renderInv(n,i){
+  const t=INV_TOOLS[n.tool||"note"]||INV_TOOLS.note, d=n.data||{};
+  let body="";
+  if(!n.tool||n.tool==="note") body='<div class="b">'+esc(n.text)+'</div>';
+  else if(n.tool==="5why") body='<div class="b"><b>Problem:</b> '+esc(d.problem)+'</div><ol class="whys">'+(d.whys||[]).map(w=>'<li>'+esc(w)+'</li>').join("")+'</ol>'+(d.conclusion?'<div class="b"><b>Root cause:</b> '+esc(d.conclusion)+' <button class="btn sm" data-userc="'+i+'">Use as RCA</button></div>':'');
+  else if(n.tool==="6m") body='<dl class="kv" style="margin-top:4px">'+SIX_M.filter(m=>d.m&&d.m[m.k]).map(m=>'<dt>'+m.n+'</dt><dd>'+esc(d.m[m.k])+'</dd>').join("")+'</dl>'+(d.likely?'<div class="b" style="margin-top:6px"><b>Most likely:</b> '+esc(d.likely)+' <button class="btn sm" data-userc="'+i+'">Use as RCA</button></div>':'');
+  else if(n.tool==="isnot") body='<div class="tablewrap" style="border-radius:6px;margin-top:6px"><table style="min-width:0"><thead><tr><th></th><th>Is</th><th>Is not</th></tr></thead><tbody>'+IS_NOT.filter(r=>d.rows&&(d.rows[r.k].is||d.rows[r.k].not)).map(r=>'<tr><td class="muted" style="font-size:12px">'+r.n+'</td><td>'+esc(d.rows[r.k].is)+'</td><td>'+esc(d.rows[r.k].not)+'</td></tr>').join("")+'</tbody></table></div>'+(d.observation?'<div class="b" style="margin-top:6px">'+esc(d.observation)+'</div>':'');
+  else if(n.tool==="gemba") body='<dl class="kv" style="margin-top:4px">'+[["Location",d.location],["Records",d.records],["Observed",d.observed],["Deviation",d.deviation]].filter(x=>x[1]).map(x=>'<dt>'+x[0]+'</dt><dd>'+esc(x[1])+'</dd>').join("")+'</dl>';
+  const att=(n.attachments||[]).length?'<div class="evidence" style="margin-top:8px">'+n.attachments.map(f=>'<div class="ev">'+(f.dataUrl?'<img src="'+f.dataUrl+'" alt="">':'<div class="ph">▤</div>')+'<div class="nm" title="'+esc(f.name)+'">'+esc(f.name)+'</div></div>').join("")+'</div>':'';
+  return '<div class="note"><div class="h"><span class="pill p-info">'+t.name+'</span><b>'+esc(n.by)+'</b><span>'+fmtDT(n.at)+'</span></div>'+body+att+'</div>';
+}
+const TOOL_SHORT={note:"Note","5why":"5 Whys","6m":"Fishbone 6M",isnot:"Is / Is-Not",gemba:"Gemba"};
+function toolChips(c){
+  if(!c.investigation.length) return '<span class="muted" style="font-size:11.5px">not started</span>';
+  const seen=[...new Set(c.investigation.map(n=>n.tool||"note"))];
+  const rca=c.rca?'<span class="tool rca" title="Root cause documented — '+esc(c.rca.cause)+'">RCA</span>':'';
+  return '<div class="tools">'+seen.map(k=>'<span class="tool" title="'+esc(TOOL_SHORT[k]||k)+'">'+esc(TOOL_SHORT[k]||k)+'</span>').join("")+rca+'</div>';
+}
+function rcaOpen(c){ return !["Pending Approval","Resolved","Closed","Rejected","Duplicate"].includes(c.status); }
+function rcaReviewPill(c){
+  const r=c.rca&&c.rca.review;
+  if(!r) return '<span class="pill p-warn">Awaiting review</span>';
+  return r.status==="Reviewed"?'<span class="pill p-ok">Reviewed</span>':'<span class="pill p-crit">Returned for rework</span>';
+}
+
+/* ============================ CHART HELPERS ============================ */
+function barList(items, opts){
+  opts = opts||{};
+  const max = Math.max(1, ...items.map(i=>i.value));
+  if(!items.length) return '<div class="empty">No data for this selection.</div>';
+  return '<div class="bars">'+items.map(i=>
+    '<div class="bar"><div class="lab" title="'+esc(i.label)+'">'+esc(i.label)+'</div>'+
+    '<div class="track"><div class="fill" style="width:'+Math.max(2,(i.value/max)*100)+'%;background:'+(i.color||"var(--copper)")+'"></div></div>'+
+    '<div class="val">'+i.value+(opts.suffix||"")+'</div></div>').join("")+'</div>';
+}
+function colChart(items){
+  const max = Math.max(1, ...items.map(i=>i.value));
+  return '<div class="cols">'+items.map(i=>
+    '<div class="col"><div class="n">'+i.value+'</div>'+
+    '<div class="stack" style="height:'+(i.value/max*100)+'%;background:'+(i.color||"var(--copper)")+'"></div>'+
+    '<div class="c">'+esc(i.label)+'</div></div>').join("")+'</div>';
+}
+function donut(items){
+  const total = items.reduce((s,i)=>s+i.value,0) || 1;
+  const R=52, C=2*Math.PI*R; let off=0;
+  const arcs = items.filter(i=>i.value>0).map(i=>{
+    const len = i.value/total*C;
+    const seg = '<circle cx="64" cy="64" r="'+R+'" fill="none" stroke="'+i.color+'" stroke-width="19" stroke-dasharray="'+len+' '+(C-len)+'" stroke-dashoffset="'+(-off)+'" transform="rotate(-90 64 64)"></circle>';
+    off += len; return seg;
+  }).join("");
+  return '<div class="donutwrap"><svg viewBox="0 0 128 128" width="128" height="128" role="img" aria-label="Case status split">'+
+    '<circle cx="64" cy="64" r="'+R+'" fill="none" stroke="var(--surface-3)" stroke-width="19"></circle>'+arcs+
+    '<text x="64" y="60" text-anchor="middle" fill="var(--ink)" font-family="Archivo" font-size="25" font-weight="700">'+total+'</text>'+
+    '<text x="64" y="77" text-anchor="middle" fill="var(--ink-3)" font-family="IBM Plex Sans" font-size="10">cases</text></svg>'+
+    '<div class="legend">'+items.map(i=>'<div><i style="background:'+i.color+'"></i>'+esc(i.label)+'<span class="n">'+i.value+'</span></div>').join("")+'</div></div>';
+}
+const HOSTED_PORTAL = "https://audree-complaint-portal.onrender.com/";
+function portalBase(){
+  if(state.portal.baseUrl) return state.portal.baseUrl;
+  let u=""; try{ u=window.top.location.href; }catch(e){}
+  if(!u) u=location.href;
+  u=u.split("#")[0].split("?")[0];
+  // Only a public https address is usable by a phone; local files and claude.ai fall back to the hosted portal.
+  if(!/^https?:\/\//i.test(u) || /claude\.ai|claudeusercontent\.com|localhost|127\.0\.0\.1/i.test(u)) u=HOSTED_PORTAL;
+  return u;
+}
+function baseIsReachable(){ const b=portalBase(); return /^https?:\/\//i.test(b) && !/localhost|127\.0\.0\.1/i.test(b); }
+const inFrame = (()=>{ try{ return window.self!==window.top; }catch(e){ return true; } })();
+function deepLink(sku,batch){ return portalBase()+"#sku="+encodeURIComponent(sku)+"&b="+encodeURIComponent(batch); }
+function qrSvg(sku,batch){
+  if(typeof qrcode==="function"){
+    try{
+      const q=qrcode(0,"M"); q.addData(deepLink(sku,batch)); q.make();
+      return q.createSvgTag({scalable:true, margin:0}).replace('fill="white"','fill="transparent"').replace('fill="black"','fill="var(--ink)"');
+    }catch(e){}
+  }
+  // fallback: deterministic pseudo-QR block pattern
+  let cells="", g=(x,y)=>((x*7+y*13+((x*y)%5)*3)%11)<5;
+  for(let y=0;y<21;y++) for(let x=0;x<21;x++){
+    const finder = (x<7&&y<7)||(x>13&&y<7)||(x<7&&y>13);
+    let on = finder ? ((x%6===0||y%6===0)||(x>1&&x<5&&y>1&&y<5)||(x>15&&x<19&&y>1&&y<5)||(x>1&&x<5&&y>15&&y<19)) : g(x,y);
+    if(on) cells += '<rect x="'+x+'" y="'+y+'" width="1" height="1"></rect>';
+  }
+  return '<svg viewBox="0 0 21 21" fill="var(--ink)" shape-rendering="crispEdges" role="img" aria-label="Product QR code">'+cells+'</svg>';
+}
+
+/* ============================ CHROME ============================ */
+const ICONS = {
+  dashboard:'<svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>',
+  queue:'<svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>',
+  capa:'<svg viewBox="0 0 24 24"><path d="M9 11l2 2 5-5"/><rect x="3" y="4" width="18" height="16" rx="2"/></svg>',
+  reports:'<svg viewBox="0 0 24 24"><path d="M6 20V10M12 20V5M18 20v-7"/></svg>',
+  portal:'<svg viewBox="0 0 24 24"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></svg>',
+  admin:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9L17 7M7 17l-2.1 2.1"/></svg>',
+  tasks:'<svg viewBox="0 0 24 24"><path d="M9 11l2 2 4-4"/><rect x="3" y="4" width="18" height="16" rx="2"/></svg>',
+  audit:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>'
+};
+const NAVS = [
+  {k:"tasks", t:"My Work", i:"tasks", badge:()=>myTaskCount()},
+  {k:"dashboard", t:"Dashboard", i:"dashboard"},
+  {k:"queue", t:"Complaint Queue", i:"queue", badge:()=>openCases().length},
+  {k:"capa", t:"RCA & CAPA", i:"capa", badge:()=>DB.cases.flatMap(c=>c.capa).filter(a=>a.status!=="Completed").length},
+  {k:"reports", t:"Reports", i:"reports"},
+  {k:"audit", t:"Audit Trail", i:"audit"},
+  {k:"admin", t:"Masters & Admin", i:"admin"},
+  {k:"portal", t:"Customer Portal", i:"portal"}
+];
+
+function renderRail(){
+  $("#rail").innerHTML =
+   '<div class="brand"><div class="mark"><span>A</span></div><div><b>Audree Complaint Desk</b><small>'+esc(COMPANY)+'</small></div></div>'+
+   '<div class="navgroup"><span class="eyebrow">Operations</span></div>'+
+   NAVS.slice(0,6).map(navBtn).join("")+
+   '<div class="navgroup"><span class="eyebrow">Configuration</span></div>'+
+   NAVS.slice(6).map(navBtn).join("")+
+   '<div class="railfoot">Phase-1 scope · .NET / SQL Server reference build<br>Demo data — not live production records.</div>';
+}
+function navBtn(n){
+  const b = n.badge ? n.badge() : null;
+  return '<button class="nav" data-nav="'+n.k+'" aria-current="'+(state.view===n.k)+'">'+ICONS[n.i]+'<span>'+n.t+'</span>'+(b?'<span class="count">'+b+'</span>':'')+'</button>';
+}
+
+function renderTop(){
+  const titles={tasks:"My Work",dashboard:"Operations Dashboard",queue:"Complaint Queue",capa:"RCA & CAPA Tracker",reports:"Reports & MIS",audit:"Audit Trail",admin:"Masters & Administration",portal:"Customer Portal (QR)"};
+  const breached = openCases().filter(c=>slaState(c).tone==="p-crit").length;
+  $("#topbar").innerHTML =
+    '<h1>'+ (state.view==="case" ? "Case File" : titles[state.view]) +'</h1>'+
+    (breached?'<span class="pill p-crit">'+breached+' SLA breached</span>':'')+
+    '<div class="spacer"></div>'+
+    '<span class="chip"><span class="dot"></span>'+fmtD(NOW)+' 11:20 IST</span>'+
+    '<label class="chip" style="gap:7px"><span class="eyebrow">Signed in as</span>'+
+      '<select class="rolepick" id="rolepick">'+USERS.filter(u=>u.active).map(u=>'<option value="'+esc(u.name)+'"'+(u.name===state.user?" selected":"")+'>'+esc(u.name)+' — '+esc(u.role)+'</option>').join("")+'</select></label>'+
+    '<button class="iconbtn" id="themebtn" title="Toggle theme">◐</button>'+
+    '<button class="iconbtn" id="resetbtn" title="Restore demo data">Reset demo</button>';
+}
+
+/* ============================ VIEWS ============================ */
+function vDashboard(){
+  const comp = DB.cases.filter(c=>c.type==="Complaint");
+  const open = openCases();
+  const closed = comp.filter(c=>c.status==="Closed");
+  const breached = open.filter(c=>slaState(c).tone==="p-crit");
+  const crit = open.filter(c=>c.severity==="Critical");
+  const fb = DB.cases.filter(c=>c.type==="Feedback");
+  const rated = fb.filter(c=>c.rating);
+  const avgRating = rated.length ? (rated.reduce((s,c)=>s+c.rating,0)/rated.length).toFixed(1) : "—";
+  const metOnTime = closed.filter(c=>slaState(c).label==="Met").length;
+  const slaPct = closed.length ? Math.round(metOnTime/closed.length*100) : 0;
+  const avgRes = closed.length ? Math.round(closed.reduce((s,c)=>s+ageH(c),0)/closed.length/24*10)/10 : 0;
+
+  const byStatus = STATUS_FLOW.map(s=>({label:s, value:comp.filter(c=>c.status===s).length}));
+  const statusColors={"New":"var(--copper)","Classified":"var(--info)","Under Investigation":"var(--warn)","RCA & CAPA":"var(--warn)","Pending Approval":"var(--warn)","Resolved":"var(--ok)","Closed":"var(--ink-3)"};
+  const donutData = byStatus.filter(s=>s.value>0).map(s=>({label:s.label,value:s.value,color:statusColors[s.label]}));
+
+  const byBrand = BRANDS.map(b=>({label:b.name, value:comp.filter(c=>c.product.brand===b.name).length})).sort((a,b)=>b.value-a.value);
+  const byCat = CATEGORIES.map(c=>({label:c.name, value:comp.filter(x=>x.category===c.name).length})).filter(x=>x.value>0).sort((a,b)=>b.value-a.value);
+  const byPlant = PLANTS.map(p=>({label:p.replace(" (Contract Bottler)"," (CB)"), value:comp.filter(c=>c.trace.plant===p).length})).sort((a,b)=>b.value-a.value);
+  const bands=[{label:"0–2 days",lo:0,hi:48},{label:"2–5 days",lo:48,hi:120},{label:"5–10 days",lo:120,hi:240},{label:"10–20 days",lo:240,hi:480},{label:"20 days +",lo:480,hi:1e9}];
+  const ageing = bands.map(b=>{ const v=open.filter(c=>{const h=ageH(c);return h>=b.lo&&h<b.hi;}).length; return {label:b.label,value:v,color:b.lo>=240?"var(--crit)":b.lo>=120?"var(--warn)":"var(--copper)"};});
+  const causes=["Process","Equipment","Material","External"];
+  const byCause = causes.map(k=>({label:k, value:comp.filter(c=>c.rca&&c.rca.cause===k).length}));
+
+  return `
+  <div class="grid" style="gap:16px">
+    <div class="kpis">
+      <div class="kpi"><span class="v">${comp.length}</span><span class="l">Complaints received</span><span class="d muted">${fb.length} feedback entries</span></div>
+      <div class="kpi"><span class="v">${open.length}</span><span class="l">Open cases</span><span class="d muted">${comp.filter(c=>c.status==="New").length} awaiting classification</span></div>
+      <div class="kpi ${breached.length?"alert":""}"><span class="v">${breached.length}</span><span class="l">SLA breached</span><span class="d" style="color:${breached.length?"var(--crit)":"var(--ok)"}">${breached.length?"Escalation required":"All within SLA"}</span></div>
+      <div class="kpi"><span class="v">${crit.length}</span><span class="l">Open critical</span><span class="d muted">Containment review due</span></div>
+      <div class="kpi"><span class="v">${slaPct}%</span><span class="l">SLA met on closure</span><span class="d muted">${metOnTime} of ${closed.length} closed</span></div>
+      <div class="kpi"><span class="v">${avgRes}<span style="font-size:14px;font-weight:600"> d</span></span><span class="l">Avg. resolution time</span><span class="d muted">registration to closure</span></div>
+      <div class="kpi"><span class="v">${avgRating}</span><span class="l">Avg. feedback rating</span><span class="d muted">${rated.length} ratings</span></div>
+      ${(()=>{const rp=comp.filter(c=>!c.duplicateOf&&repeatsFor(c).all.length); const cf=comp.filter(c=>capaFailure(c));
+        return '<div class="kpi '+(cf.length?"alert":"")+'"><span class="v">'+rp.length+'</span><span class="l">Repeat complaints</span><span class="d" style="color:'+(cf.length?"var(--crit)":"var(--ink-3)")+'">'+(cf.length?cf.length+" after a verified PA":"none after a verified PA")+'</span></div>';})()}
+    </div>
+
+    <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(320px,1fr))">
+      <div class="card"><div class="panelhead"><h3>Case status split</h3><span class="sub">complaints only</span></div>${donut(donutData)}</div>
+      <div class="card"><div class="panelhead"><h3>Open case ageing</h3><span class="sub">${open.length} open</span></div>${colChart(ageing)}</div>
+    </div>
+
+    <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(320px,1fr))">
+      <div class="card"><div class="panelhead"><h3>Complaints by brand</h3></div>${barList(byBrand)}</div>
+      <div class="card"><div class="panelhead"><h3>Complaints by category</h3></div>${barList(byCat)}</div>
+      <div class="card"><div class="panelhead"><h3>By bottling unit</h3><span class="sub">batch traceability</span></div>${barList(byPlant)}</div>
+      <div class="card"><div class="panelhead"><h3>Root cause distribution</h3><span class="sub">${comp.filter(c=>c.rca).length} cases with RCA</span></div>${barList(byCause,{})}</div>
+    </div>
+
+    <div class="card">
+      <div class="panelhead" style="padding-bottom:12px"><h3>Needs attention now</h3><span class="sub">critical, escalated or SLA-breaching</span></div>
+      ${caseTable(open.filter(c=>c.severity==="Critical"||c.escalated||slaState(c).tone!=="p-ok").sort((a,b)=>ageH(b)-ageH(a)))}
+    </div>
+  </div>`;
+}
+
+function caseTable(list){
+  if(!list.length) return '<div class="empty">Nothing here right now.</div>';
+  return '<div class="tablewrap" style="border:none;border-radius:0"><table><thead><tr>'+
+    '<th>Reference</th><th>Brand / SKU</th><th>Category</th><th>Severity</th><th>Status</th><th>Investigation</th><th>Waiting on</th><th>Age</th><th>SLA</th></tr></thead><tbody>'+
+    list.map(c=>{ const s=slaState(c); return '<tr class="clickable" data-case="'+c.id+'">'+
+      '<td><span class="mono" style="color:var(--copper);font-weight:500">'+c.id+'</span> '+repeatBadge(c)+(c.escalated?' <span class="pill p-crit">ESC</span>':'')+(c.hold?' <span class="pill p-warn">HOLD</span>':'')+'</td>'+
+      '<td>'+esc(c.product.brand)+'<div class="muted mono" style="font-size:11px">'+esc(c.product.sku)+' · '+esc(c.trace.batch)+'</div></td>'+
+      '<td style="max-width:220px">'+esc(c.category)+'</td>'+
+      '<td><span class="sev sev-'+c.severity+'"><i></i>'+c.severity+'</span></td>'+
+      '<td><span class="pill '+STATUS_TONE[c.status]+'">'+esc(c.status)+'</span></td>'+
+      '<td>'+toolChips(c)+'</td>'+
+      '<td>'+(()=>{const t=nextTask(c); return t?esc(t.who[0])+(t.who.length>1?' <span class="muted">+'+(t.who.length-1)+'</span>':'')+'<div class="muted" style="font-size:11px">'+esc(t.what)+'</div>':'<span class="muted">—</span><div class="muted" style="font-size:11px">'+esc(c.assignee||"")+'</div>';})()+'</td>'+
+      '<td class="mono">'+ageLabel(c)+'</td>'+
+      '<td><span class="pill '+s.tone+'">'+s.label+'</span></td></tr>';
+    }).join("")+'</tbody></table></div>';
+}
+
+function vQueue(){
+  let list = DB.cases.slice();
+  if(state.queueTab==="open") list = list.filter(c=>c.type==="Complaint" && !["Closed","Rejected","Duplicate"].includes(c.status));
+  else if(state.queueTab==="mine") list = list.filter(c=>c.assignee===state.user);
+  else if(state.queueTab==="unassigned") list = list.filter(c=>c.type==="Complaint" && !c.assignee && c.status!=="Closed");
+  else if(state.queueTab==="feedback") list = list.filter(c=>c.type==="Feedback");
+  else if(state.queueTab==="closed") list = list.filter(c=>["Closed","Rejected","Duplicate"].includes(c.status));
+  if(state.fSev) list=list.filter(c=>c.severity===state.fSev);
+  if(state.fStatus) list=list.filter(c=>c.status===state.fStatus);
+  if(state.fBrand) list=list.filter(c=>c.product.brand===state.fBrand);
+  if(state.fDept) list=list.filter(c=>c.department===state.fDept);
+  if(state.fTool) list=list.filter(c=> state.fTool==="rca" ? !!c.rca : c.investigation.some(n=>(n.tool||"note")===state.fTool));
+  if(state.q){ const q=state.q.toLowerCase();
+    list=list.filter(c=>[c.id,c.customer.name,c.customer.mobile,c.trace.batch,c.product.brand,c.product.sku,c.category,c.description].join(" ").toLowerCase().includes(q)); }
+  list.sort((a,b)=> new Date(b.createdAt)-new Date(a.createdAt));
+
+  const nC=c=>c.type==="Complaint";
+  const counts={
+    open:DB.cases.filter(c=>nC(c)&&!["Closed","Rejected","Duplicate"].includes(c.status)).length,
+    unassigned:DB.cases.filter(c=>nC(c)&&!c.assignee&&c.status!=="Closed").length,
+    mine:DB.cases.filter(c=>c.assignee===state.user).length,
+    feedback:DB.cases.filter(c=>c.type==="Feedback").length,
+    closed:DB.cases.filter(c=>["Closed","Rejected","Duplicate"].includes(c.status)).length,
+    all:DB.cases.length};
+  const tabs=[["open","Open"],["unassigned","Unassigned"],["mine","Assigned to me"],["feedback","Feedback"],["closed","Closed"],["all","All"]];
+  return `
+  <div class="tabbar" role="tablist">${tabs.map(t=>'<button class="tab" role="tab" data-qtab="'+t[0]+'" aria-selected="'+(state.queueTab===t[0])+'">'+t[1]+'<span class="tc">'+counts[t[0]]+'</span></button>').join("")}</div>
+  <div class="filters">
+    <input type="search" id="q" placeholder="Search reference, batch, customer, SKU…" value="${esc(state.q)}">
+    <select id="fSev"><option value="">All severities</option>${SEVERITIES.map(s=>'<option'+(state.fSev===s.name?" selected":"")+'>'+s.name+'</option>').join("")}</select>
+    <select id="fStatus"><option value="">All statuses</option>${STATUS_FLOW.map(s=>'<option'+(state.fStatus===s?" selected":"")+'>'+s+'</option>').join("")}</select>
+    <select id="fBrand"><option value="">All brands</option>${BRANDS.map(b=>'<option'+(state.fBrand===b.name?" selected":"")+'>'+b.name+'</option>').join("")}</select>
+    <select id="fDept"><option value="">All departments</option>${DEPTS.map(d=>'<option'+(state.fDept===d?" selected":"")+'>'+d+'</option>').join("")}</select>
+    <select id="fTool"><option value="">Any investigation</option>${Object.entries(TOOL_SHORT).map(([k,v])=>'<option value="'+k+'"'+(state.fTool===k?" selected":"")+'>'+v+'</option>').join("")}<option value="rca"${state.fTool==="rca"?" selected":""}>Has RCA</option></select>
+    <button class="btn sm" id="clearf">Clear</button>
+    <span class="spacer"></span><span class="muted" style="font-size:12.5px">${list.length} case${list.length===1?"":"s"}</span>
+  </div>
+  <div class="card">${caseTable(list)}</div>`;
+}
+
+/* ---------- case file ---------- */
+function vCase(){
+  const c = DB.cases.find(x=>x.id===state.caseId);
+  if(!c) return '<div class="empty">Case not found.</div>';
+  const s = slaState(c);
+  const tabs=[["summary","Case summary"],["investigation","Investigation"],["capa","RCA & CAPA"],["comms","Communication"],["audit","Audit trail"]];
+  return `
+  <button class="btn sm" data-nav="queue" style="margin-bottom:14px">← Back to queue</button>
+  <div class="casehead">
+    <div style="flex:1;min-width:260px">
+      <div class="caseid">${c.id} · ${esc(c.type)} · registered via ${esc(c.channel)}</div>
+      <h2 style="margin:4px 0 7px">${esc(c.category)}</h2>
+      <div class="row" style="gap:8px">
+        <span class="pill ${STATUS_TONE[c.status]}">${esc(c.status)}</span>
+        <span class="sev sev-${c.severity}"><i></i>${c.severity} · ${c.priority}</span>
+        <span class="pill ${s.tone}">SLA ${s.label}</span>
+        <span class="chip">Age ${ageLabel(c)}</span>
+        ${waitingChip(c)}
+        ${c.escalated?'<span class="pill p-crit">Escalated</span>':''}
+        ${c.hold?'<span class="pill p-warn">Batch on hold</span>':''}
+      </div>
+    </div>
+  </div>
+  <div class="tabbar">${tabs.map(t=>'<button class="tab" data-ctab="'+t[0]+'" aria-selected="'+(state.caseTab===t[0])+'">'+t[1]+'</button>').join("")}</div>
+  <div class="casegrid">
+    <div class="card pad">${caseTabBody(c)}</div>
+    <div class="grid" style="gap:14px">${actionPanel(c)}${stagePanel(c)}</div>
+  </div>`;
+}
+
+function caseTabBody(c){
+  if(state.caseTab==="summary"){
+    return `
+    <div class="section"><h4>Complaint detail</h4>
+      <p style="margin:0 0 12px;font-size:14px;line-height:1.6">${esc(c.description)}</p>
+      ${c.rating?'<div class="row"><span class="muted" style="font-size:12px">Rating</span><span style="color:var(--copper-2);font-size:16px">'+"★".repeat(c.rating)+'<span style="color:var(--line)">'+"★".repeat(5-c.rating)+'</span></span></div>':''}
+      ${c.evidence.length?'<div class="evidence" style="margin-top:10px">'+c.evidence.map(e=>'<div class="ev">'+(e.dataUrl?'<img src="'+e.dataUrl+'" alt="'+esc(e.name)+'">':'<div class="ph">'+(e.kind==="doc"?"▤":"▣")+'</div>')+'<div class="nm" title="'+esc(e.name)+'">'+esc(e.name)+'</div></div>').join("")+'</div>':'<div class="muted" style="font-size:12.5px">No evidence uploaded.</div>'}
+    </div>
+    <div class="section"><h4>Customer</h4><dl class="kv">
+      <dt>Name</dt><dd>${esc(c.customer.name)}</dd>
+      <dt>Mobile</dt><dd class="mono">${esc(c.customer.mobile)}</dd>
+      <dt>Email</dt><dd>${esc(c.customer.email)}</dd>
+      <dt>Location</dt><dd>${esc(c.customer.city)}, ${esc(c.customer.state)} — <span class="mono">${esc(c.customer.pin)}</span></dd>
+    </dl></div>
+    <div class="section"><h4>Product &amp; traceability</h4><dl class="kv">
+      <dt>Brand</dt><dd>${esc(c.product.brand)} <span class="muted">(${esc(c.product.cat)})</span></dd>
+      <dt>Variant / SKU</dt><dd>${esc(c.product.variant)} · <span class="mono">${esc(c.product.sku)}</span> · ${esc(c.product.pack)}</dd>
+      <dt>Batch / lot</dt><dd class="mono">${esc(c.trace.batch)}</dd>
+      <dt>Mfg. date</dt><dd>${fmtD(c.trace.mfgDate)}</dd>
+      <dt>Bottling unit</dt><dd>${esc(c.trace.plant)}</dd>
+    </dl></div>
+    <div class="section"><h4>Purchase</h4><dl class="kv">
+      <dt>Date</dt><dd>${fmtD(c.purchase.date)}</dd>
+      <dt>Outlet</dt><dd>${esc(c.purchase.outlet)}</dd>
+      <dt>Location</dt><dd>${esc(c.purchase.location)}</dd>
+      <dt>Invoice ref.</dt><dd class="mono">${esc(c.purchase.invoice)}</dd>
+    </dl></div>
+    <div class="section"><h4>Repeats &amp; duplicates</h4>
+      ${(()=>{
+        const par=parentOf(c), dups=duplicatesOf(c.id), r=repeatsFor(c), fail=capaFailure(c);
+        let out="";
+        if(par) out+='<div class="callout crit">This case is a <b>duplicate</b> of <a href="#" data-case="'+par.id+'" class="mono">'+par.id+'</a> — the outcome recorded there applies here, and closing the parent closes this case too.</div>';
+        if(dups.length) out+='<div class="callout">'+dups.length+' case'+(dups.length>1?"s":"")+' linked to this one as duplicate'+(dups.length>1?"s":"")+': '+dups.map(x=>'<a href="#" data-case="'+x.id+'" class="mono">'+x.id+'</a>').join(", ")+'. They close automatically when this case closes.</div>';
+        if(fail) out+='<div class="callout crit"><b>Preventive action did not hold.</b> '+esc(fail.pa.action)+' was verified effective on <a href="#" data-case="'+fail.prev.id+'" class="mono">'+fail.prev.id+'</a>, and the same defect has recurred. Re-open the CAPA rather than repeating it.</div>';
+        const grp=(title,list,note)=> list.length ? '<div class="rgrp"><div class="rgh">'+title+' <span class="rgn">'+list.length+'</span></div>'+
+          '<div class="rgm">'+note+'</div>'+list.slice(0,6).map(x=>'<div class="rrow"><a href="#" data-case="'+x.id+'" class="mono">'+x.id+'</a>'+
+            '<span class="pill '+STATUS_TONE[x.status]+'">'+esc(x.status)+'</span>'+
+            '<span class="rd">'+fmtD(x.createdAt)+'</span>'+
+            (x.rca?'<span class="rc" title="'+esc(x.rca.rootCause)+'">'+esc(x.rca.cause)+' cause</span>':'<span class="rc muted">no RCA</span>')+
+          '</div>').join("")+'</div>' : '';
+        out+=grp("Same batch", r.sameBatch, "Same lot — points at one production window.");
+        out+=grp("Same defect, other batches", r.sameDefect, "Same SKU and category — points at a systemic cause.");
+        out+=grp("Same defect at this unit", r.samePlant, "Other products, same bottling unit and defect type.");
+        if(!out) out='<div class="muted" style="font-size:12.5px">No earlier cases on batch '+esc(c.trace.batch)+', and no prior '+esc(c.category).toLowerCase()+' on '+esc(c.product.sku)+'. This is the first of its kind.</div>';
+        return out;
+      })()}
+    </div>
+    <div class="section"><h4>Customer confirmation</h4>
+      ${c.customerResponse
+        ? '<div class="note"><div class="h"><span class="pill '+(c.customerResponse.status==="Confirmed"?"p-ok":"p-crit")+'">'+esc(c.customerResponse.status)+'</span><b>'+esc(c.customer.name)+'</b><span>'+fmtDT(c.customerResponse.at)+'</span></div>'+(c.customerResponse.comment?'<div class="b">'+esc(c.customerResponse.comment)+'</div>':'<div class="b muted">No comment left.</div>')+'</div>'
+        : (c.status==="Resolved" ? '<div class="stagenote">The outcome is published to the consumer’s status page. Waiting for them to confirm or dispute it — Customer Care can close without a response if needed.</div>'
+           : '<div class="muted" style="font-size:12.5px">Nothing to confirm yet — the consumer sees the outcome once the case is resolved.</div>')}
+    </div>`;
+  }
+  if(state.caseTab==="investigation"){
+    const tool = state.invTool || "note";
+    const whoCan = USERS.filter(u=>u.active&&(ROLES[u.role]||[]).includes("investigate")).map(u=>u.name).join(", ");
+    return `<div class="section"><h4>Investigation record</h4>
+      ${c.investigation.length? c.investigation.map((n,i)=>renderInv(n,i)).join("")
+       :'<div class="muted" style="font-size:12.5px">No investigation entries yet.</div>'}
+    </div>
+    ${can("investigate") ? `<div class="section"><h4>Add investigation entry</h4>
+      <div class="toolbar">${Object.entries(INV_TOOLS).map(([k,t])=>'<button class="toolbtn" data-tool="'+k+'" aria-pressed="'+(tool===k)+'"><b>'+t.name+'</b><small>'+t.hint+'</small></button>').join("")}</div>
+      <div id="invform" style="margin-top:14px">${invForm(tool)}</div>
+      <div class="field" style="margin-top:12px"><label for="invfiles">Attachments (lab report, line log, photos)</label>
+        <input type="file" id="invfiles" multiple accept="image/*,.pdf,.xlsx,.csv,.docx">
+        ${state.invFiles&&state.invFiles.length?'<div class="evidence" style="margin-top:8px">'+state.invFiles.map(f=>'<div class="ev">'+(f.dataUrl?'<img src="'+f.dataUrl+'" alt="">':'<div class="ph">▤</div>')+'<div class="nm" title="'+esc(f.name)+'">'+esc(f.name)+'</div></div>').join("")+'</div>':''}
+      </div>
+      <div class="row" style="margin-top:12px"><button class="btn primary" id="addinv">Record ${esc(INV_TOOLS[tool].name)}</button>
+        <span class="muted" style="font-size:11.5px">Entries are timestamped and cannot be edited afterwards.</span></div>
+    </div>`
+    : `<div class="denied" style="margin-top:12px"><b>${esc(state.role)} cannot record investigation findings.</b> ${c.assignee===state.user?'This case is assigned to you, but findings are recorded by a QA/QC or plant user — reassign it from the Case summary tab.':'This case is with <b>'+esc(c.assignee||"nobody yet")+'</b>.'} Users who can investigate: ${esc(whoCan)}. In this demo, switch user from the "Signed in as" menu at the top.</div>`}`;
+  }
+  if(state.caseTab==="capa"){
+    return `
+    <div class="section"><h4>Root cause analysis</h4>
+      ${c.rca? '<div class="note"><div class="h"><b>'+esc(c.rca.by)+'</b><span>'+fmtDT(c.rca.at)+'</span><span class="pill p-info">'+esc(c.rca.cause)+'</span>'+rcaReviewPill(c)+'</div><div class="b">'+esc(c.rca.rootCause)+'</div>'
+          +(c.rca.review?'<div class="muted" style="font-size:12px;margin-top:6px">Review by '+esc(c.rca.review.by)+' · '+fmtDT(c.rca.review.at)+(c.rca.review.comment?': “'+esc(c.rca.review.comment)+'”':'')+'</div>':'')+'</div>'
+       : '<div class="muted" style="font-size:12.5px">Root cause not yet documented.</div>'}
+      ${can("rca") && rcaOpen(c) ? `<div class="field" style="margin-top:12px"><label for="rcatext">${c.rca?"Revise root cause":"Document root cause"}</label>
+        <textarea id="rcatext" placeholder="State the verified root cause, not the symptom.">${c.rca?esc(c.rca.rootCause):esc(state.rcaPrefill||"")}</textarea>
+        <div class="row" style="margin-top:8px">
+          <select id="rcacause" style="border:1px solid var(--line);border-radius:6px;padding:6px 9px">${["Process","Equipment","Material","External"].map(k=>'<option'+(c.rca&&c.rca.cause===k?" selected":"")+'>'+k+'</option>').join("")}</select>
+          <button class="btn primary" id="saverca">Save RCA</button>
+          ${c.rca&&c.rca.review?'<span class="muted" style="font-size:11.5px">Saving again resets the review.</span>':''}</div></div>` : ''}
+      ${!rcaOpen(c) ? '<div class="stagenote" style="margin-top:10px">The case has moved past RCA &amp; CAPA — the root cause is locked. The QA Manager can return it for rework from the approval panel.</div>' : ''}
+      ${c.rca && can("approve") && rcaOpen(c) && !(c.rca.review&&c.rca.review.status==="Reviewed") ? `<div class="actionbox" style="margin-top:12px"><h4>RCA review · QA Manager</h4>
+        <div class="stagenote">Check that the stated cause is verified by evidence (retained sample, line data, supplier lot) and is a cause, not a symptom.</div>
+        <div class="field"><label for="rcareview">Review comment</label><textarea id="rcareview" style="min-height:56px" placeholder="e.g. Verified against torque log for the shift."></textarea></div>
+        <div class="row" style="margin-top:8px"><button class="btn primary" id="rcaApprove">Mark RCA reviewed</button><button class="btn" id="rcaReturn">Return for rework</button></div></div>` : ''}
+      ${c.rca && !can("approve") && !(c.rca.review&&c.rca.review.status==="Reviewed") ? '<div class="stagenote" style="margin-top:10px">Awaiting RCA review by the QA Manager before the case can be submitted for approval.</div>':''}
+    </div>
+    <div class="section"><h4>Corrective &amp; preventive actions</h4>
+      ${c.capa.length? c.capa.map((a,i)=>{
+        const overdue = a.status!=="Completed" && new Date(a.target) < NOW;
+        return '<div class="capa"><div class="top"><span class="pill '+(a.kind==="CA"?"p-info":"p-new")+'">'+a.kind+'</span>'+
+          '<span class="pill '+(a.status==="Completed"?"p-ok":a.status==="In Progress"?"p-warn":"p-mute")+'">'+a.status+'</span>'+
+          (overdue?'<span class="pill p-crit">Overdue</span>':'')+
+          (a.status==="Completed"&&!a.effectiveness?'<span class="pill p-warn">Effectiveness not verified</span>':'')+
+          (a.effectiveness?'<span class="pill p-ok">Effective</span>':'')+
+          '<span class="spacer" style="flex:1"></span>'+
+          (can("capa")&&a.status!=="Completed"&&rcaOpen(c)?'<button class="btn sm" data-advance="'+i+'">'+(a.status==="Open"?"Start":"Mark complete")+'</button>':'')+
+          (can("approve")&&a.status==="Completed"&&!a.effectiveness?'<button class="btn sm" data-verify="'+i+'">Verify effectiveness</button>':'')+
+          '</div><div style="font-size:13.5px">'+esc(a.action)+'</div>'+
+          '<div class="meta"><span>Owner: <b>'+esc(a.owner)+'</b></span><span>Target: <span class="mono">'+fmtD(a.target)+'</span></span>'+
+          (a.effectiveness?'<span>Effectiveness: '+esc(a.effectiveness)+'</span>':'')+'</div></div>';
+      }).join("") : '<div class="muted" style="font-size:12.5px">No actions raised yet.</div>'}
+      ${can("capa") && rcaOpen(c) ? `<div class="grid" style="grid-template-columns:1fr 1fr;gap:10px;margin-top:12px">
+        <div class="field"><label>Action type</label><select id="capakind"><option value="CA">Corrective action (CA)</option><option value="PA">Preventive action (PA)</option></select></div>
+        <div class="field"><label>Owner</label><select id="capaowner">${USERS.filter(u=>u.active&&u.role!=="Management (read-only)").map(u=>'<option>'+esc(u.name)+'</option>').join("")}</select></div>
+        <div class="field" style="grid-column:1/-1"><label>Action</label><textarea id="capatext" placeholder="What will be done, on which line, to which lot…"></textarea></div>
+        <div class="field"><label>Target date</label><input type="date" id="capatarget" value="${new Date(addH(NOW,24*14)).toISOString().slice(0,10)}"></div>
+        <div class="field" style="justify-content:flex-end"><button class="btn primary" id="addcapa">Raise action</button></div>
+      </div>` : (rcaOpen(c) ? '<div class="denied" style="margin-top:12px">Raising CAPA requires a QA/QC, Plant or QA Manager role.</div>' : '')}
+    </div>`;
+  }
+  if(state.caseTab==="comms"){
+    return `<div class="section"><h4>Notification outbox</h4>
+      <div class="stagenote">Simulated SMTP outbox. Templates are configurable under Masters &amp; Admin → Notification templates.</div>
+      ${c.outbox.length? c.outbox.slice().reverse().map(m=>'<div class="note"><div class="h"><span class="pill p-mute">'+esc(m.key)+'</span><b>'+esc(m.to)+'</b><span>'+fmtDT(m.at)+'</span></div><div class="b"><b>'+esc(m.subject)+'</b><div class="muted" style="white-space:pre-wrap;font-size:12.5px;margin-top:4px">'+esc(m.body)+'</div></div></div>').join("")
+       : '<div class="muted" style="font-size:12.5px">No messages sent.</div>'}
+    </div>`;
+  }
+  return `<div class="section"><h4>Audit trail</h4>
+    <div class="stagenote">Every status change, assignment and user action is retained with an immutable timestamp.</div>
+    ${c.audit.slice().reverse().map(a=>'<div class="note"><div class="h"><b>'+esc(a.action)+'</b><span>'+fmtDT(a.at)+'</span><span>'+esc(a.by)+'</span></div>'+(a.detail?'<div class="b">'+esc(a.detail)+'</div>':'')+'</div>').join("")}
+  </div>`;
+}
+
+function stagePanel(c){
+  const si = STATUS_FLOW.indexOf(c.status);
+  return '<div class="card pad"><h4 style="font-size:12px;text-transform:uppercase;letter-spacing:.09em;color:var(--ink-3);margin-bottom:12px">Workflow stage</h4>'+
+    '<div class="timeline">'+STATUS_FLOW.map((s,i)=>{
+      const cls = i<si?"done":i===si?"now":"";
+      const CAND={0:["Registered"],1:["Classified"],2:["Assigned"],3:["Status → RCA & CAPA","RCA recorded"],4:["Status → Pending Approval"],5:["Resolved"],6:["Closed"]};
+      const hit = c.audit.find(a=>(CAND[i]||[]).includes(a.action));
+      const when = hit ? '<div class="m mono">'+fmtDT(hit.at)+'</div>' : (i<si?'<div class="m">completed</div>':'');
+      const extra = i===2&&c.assignee&&i<=si ? '<div class="m">'+esc(c.assignee)+' · '+esc(c.department||"")+'</div>' : '';
+      return '<div class="tl '+cls+'"><div class="mk">'+(i<si?"✓":i+1)+'</div><div><div class="t">'+s+'</div>'+
+        (i<si?when+extra : i===si ? (when||'<div class="m">current stage</div>')+extra : '<div class="m">pending</div>')+'</div></div>';
+    }).join("")+'</div>'+
+    '<div class="stagenote" style="margin:12px 0 0;border-top:1px solid var(--line-2);padding-top:10px">'+esc(sevOf(c.severity).note)+'<br><b>Response SLA</b> '+sevOf(c.severity).respHrs+' h · <b>Resolution SLA</b> '+sevOf(c.severity).resHrs+' h · due <span class="mono">'+fmtD(dueAt(c))+'</span></div></div>';
+}
+
+function actionPanel(c){
+  const A=[];
+  if(c.status==="Closed"||c.status==="Rejected") A.push('<div class="stagenote">This case is closed. Reopening requires a System Administrator.</div>');
+  if(c.status==="New"){
+    if(can("triage")){
+      A.push(`<div class="field"><label class="req">Classify as</label><select id="tType"><option>Complaint</option><option${c.type==="Feedback"?" selected":""}>Feedback</option></select></div>
+      <div class="field"><label class="req">Category</label><select id="tCat">${CATEGORIES.map(x=>'<option'+(x.name===c.category?" selected":"")+'>'+esc(x.name)+'</option>').join("")}</select></div>
+      <div class="field"><label class="req">Severity</label><select id="tSev">${SEVERITIES.map(s=>'<option'+(s.name===c.severity?" selected":"")+'>'+s.name+'</option>').join("")}</select></div>
+      <div class="row" style="margin-top:10px"><button class="btn primary" id="doTriage">Classify case</button></div>
+      ${(()=>{ const cand=dupCandidates(c); return cand.length ? `<div class="field" style="margin-top:12px;border-top:1px solid var(--line);padding-top:12px">
+        <label for="dupOf">Or link as a duplicate of</label>
+        <select id="dupOf">${cand.slice(0,12).map(x=>'<option value="'+x.id+'">'+x.id+' — '+esc(x.category)+' · '+esc(x.trace.batch)+'</option>').join("")}</select>
+        <span class="hint">Use this when the same consumer or the same bottle has already been logged. A second consumer with the same defect is a repeat, not a duplicate — leave it open.</span>
+        <button class="btn danger sm" id="doDup" style="margin-top:8px;align-self:flex-start">Mark as duplicate</button></div>` : ''; })()}`);
+    } else A.push('<div class="denied">Classification requires a Customer Care or QA Manager role.</div>');
+  }
+  else if(c.status==="Classified"||(!c.assignee && c.status!=="Closed")){
+    if(can("assign")){
+      const dept = state.assignDept || c.department || catOf(c.category)?.dept || DEPTS[0];
+      const pool = investigators(dept);
+      A.push(`<div class="field"><label class="req">Department</label><select id="aDept">${DEPTS.map(d=>'<option'+(d===dept?" selected":"")+'>'+esc(d)+'</option>').join("")}</select></div>
+      <div class="field"><label class="req">Assign to</label>
+        <select id="aUser"${pool.length?"":" disabled"}>${pool.length?pool.map(u=>'<option>'+esc(u.name)+' — '+esc(u.role)+'</option>').join(""):'<option>No investigator in this department</option>'}</select>
+        <span class="hint">Only users who can record findings are listed. ${esc(dept)} has ${pool.length} investigator${pool.length===1?"":"s"}.</span></div>
+      <button class="btn primary" id="doAssign" style="margin-top:10px"${pool.length?"":" disabled"}>Assign &amp; start investigation</button>
+      ${pool.length?"":'<div class="stagenote" style="margin-top:8px">Pick another department, or add an investigator under Masters &amp; Admin → Users.</div>'}`);
+    } else A.push('<div class="denied">Assignment requires a Customer Care or QA Manager role.</div>');
+  }
+  else if(c.status==="Under Investigation"){
+    A.push('<div class="stagenote">Record findings under the Investigation tab, then move the case to RCA &amp; CAPA.</div>');
+    if(can("investigate")) A.push('<button class="btn primary" id="toRCA"'+(c.investigation.length?"":" disabled")+'>Move to RCA &amp; CAPA</button>'+(c.investigation.length?'':'<div class="stagenote" style="margin-top:8px">At least one investigation note is required.</div>'));
+    else A.push('<div class="denied">Findings are recorded by the assigned investigator'+(c.assignee?' (<b>'+esc(c.assignee)+'</b>)':'')+'. Customer Care can escalate or communicate with the customer meanwhile.</div>');
+  }
+  else if(c.status==="RCA & CAPA"){
+    const reviewed = c.rca && c.rca.review && c.rca.review.status==="Reviewed";
+    const ready = reviewed && c.capa.length;
+    A.push('<div class="stagenote">Document the root cause, get it reviewed by the QA Manager, and raise at least one action before requesting approval.</div>');
+    A.push('<div class="checks">'+[["Root cause documented",!!c.rca],["RCA reviewed by QA Manager",!!reviewed],["At least one CA / PA raised",c.capa.length>0]].map(x=>'<div class="'+(x[1]?"on":"")+'"><i>'+(x[1]?"✓":"○")+'</i>'+x[0]+'</div>').join("")+'</div>');
+    if(can("rca")) A.push('<button class="btn primary" id="toApproval"'+(ready?"":" disabled")+' style="margin-top:10px">Submit for approval</button>');
+    else A.push('<div class="denied">RCA entry is restricted to QA/QC users and above.</div>');
+  }
+  else if(c.status==="Pending Approval"){
+    if(can("approve")){
+      A.push(`<div class="field"><label class="req">Resolution communicated to customer</label><textarea id="resText" placeholder="Plain-language outcome the customer will receive."></textarea></div>
+      <div class="row" style="margin-top:10px"><button class="btn primary" id="doResolve">Approve &amp; resolve</button><button class="btn" id="doReturn">Return to QA</button></div>`);
+    } else A.push('<div class="denied">Approval is restricted to the QA Manager.</div>');
+  }
+  else if(c.status==="Resolved"){
+    if(can("close")){
+      const cr=c.customerResponse;
+      if(cr&&cr.status==="Disputed") A.push('<div class="denied"><b>The consumer disputed this outcome</b> on '+fmtD(cr.at)+(cr.comment?': “'+esc(cr.comment)+'”':'.')+' Re-open the investigation rather than closing.</div><button class="btn" id="reopen" style="margin-bottom:8px">Re-open investigation</button>');
+      else if(cr) A.push('<div class="owner me"><b>Consumer confirmed the outcome</b> on '+fmtD(cr.at)+'.</div>');
+      else A.push('<div class="stagenote">No consumer response yet — they can confirm from their status page. Close without it only if they cannot be reached.</div>');
+      A.push('<label class="row" style="gap:7px;font-size:13px;margin:0 0 10px"><input type="checkbox" id="custConf"'+(cr&&cr.status==="Confirmed"?" checked":"")+'> Customer confirmation received</label><button class="btn primary" id="doClose">Close case</button>');
+    }
+    else A.push('<div class="denied">Closure is handled by Customer Care or the QA Manager.</div>');
+  }
+  const extra=[];
+  if(!["Closed","Rejected","Duplicate"].includes(c.status)){
+    if(can("escalate")) extra.push('<button class="btn sm" id="doEsc">'+(c.escalated?"Withdraw escalation":"Escalate")+'</button>');
+    if(can("hold")) extra.push('<button class="btn sm" id="doHold">'+(c.hold?"Release batch hold":"Place batch on hold")+'</button>');
+  }
+  const nt=nextTask(c);
+  const owns = nt && nt.who.includes(state.user);
+  const banner = nt ? '<div class="owner '+(owns?"me":"")+'">'+(owns?'<b>This is your action.</b> ':'<b>Waiting on '+esc(nt.who.join(", "))+'.</b> ')+esc(nt.what)+'.</div>' : '';
+  return '<div class="actionbox"><h4>Next action · '+esc(c.status)+'</h4>'+banner+A.join("")+
+    (extra.length?'<div class="row" style="margin-top:12px;border-top:1px solid var(--line);padding-top:10px">'+extra.join("")+'</div>':'')+'</div>';
+}
+
+
+function vTasks(){
+  const cases=myCaseTasks(), capa=myCapaTasks();
+  const mine=DB.cases.filter(c=>c.assignee===state.user&&!["Closed","Rejected","Duplicate"].includes(c.status));
+  const overdue=capa.filter(x=>new Date(x.a.target)<NOW).length;
+  const sec=(title,sub,body)=>'<div class="card" style="margin-bottom:16px"><div class="panelhead" style="padding-bottom:10px"><h3>'+title+'</h3><span class="sub">'+sub+'</span></div>'+body+'</div>';
+  const taskRows = cases.length ? '<div class="tasklist">'+cases.sort((a,b)=>ageH(b.c)-ageH(a.c)).map(({c,t})=>{
+      const s=slaState(c);
+      return '<div class="task" data-task="'+c.id+'|'+t.tab+'">'+
+        '<div class="tw"><span class="pill '+STATUS_TONE[c.status]+'">'+esc(c.status)+'</span>'+
+          '<span class="sev sev-'+c.severity+'"><i></i>'+c.severity+'</span>'+
+          (c.escalated?'<span class="pill p-crit">ESC</span>':'')+
+          '<span class="pill '+s.tone+'">'+s.label+'</span></div>'+
+        '<div class="tt">'+esc(t.what)+'</div>'+
+        '<div class="tm"><span class="mono" style="color:var(--copper)">'+c.id+'</span> · '+esc(c.product.brand)+' · '+esc(c.category)+
+          (t.who.length>1?' · <span class="muted">shared with '+(t.who.length-1)+' other'+(t.who.length>2?"s":"")+'</span>':'')+'</div>'+
+      '</div>'; }).join("")+'</div>'
+    : '<div class="empty">Nothing is waiting on you right now.</div>';
+
+  const capaRows = capa.length ? '<div class="tasklist">'+capa.sort((a,b)=>new Date(a.a.target)-new Date(b.a.target)).map(x=>{ const {c,a,i}=x;
+      const od=new Date(a.target)<NOW;
+      return '<div class="task" data-task="'+c.id+'|capa">'+
+        '<div class="tw"><span class="pill '+(a.kind==="CA"?"p-info":"p-new")+'">'+a.kind+'</span>'+
+          '<span class="pill '+(a.status==="In Progress"?"p-warn":"p-mute")+'">'+a.status+'</span>'+
+          (od?'<span class="pill p-crit">Overdue</span>':'<span class="pill p-ok">Due '+fmtD(a.target)+'</span>')+'</div>'+
+        '<div class="tt">'+esc(a.action)+'</div>'+
+        '<div class="tm" style="color:var(--copper)">'+esc(x.job||"Complete this action")+'</div>'+
+        '<div class="tm"><span class="mono" style="color:var(--copper)">'+c.id+'</span> · '+esc(c.product.brand)+' · '+esc(c.trace.batch)+'</div>'+
+      '</div>'; }).join("")+'</div>'
+    : '<div class="empty">No open actions assigned to you.</div>';
+
+  return `
+  <div class="kpis" style="margin-bottom:16px">
+    <div class="kpi"><span class="v">${cases.length}</span><span class="l">Cases awaiting your action</span></div>
+    <div class="kpi"><span class="v">${capa.length}</span><span class="l">CAPA actions on you</span></div>
+    <div class="kpi ${overdue?"alert":""}"><span class="v">${overdue}</span><span class="l">Past target date</span></div>
+    <div class="kpi"><span class="v">${mine.length}</span><span class="l">Open cases assigned to you</span></div>
+  </div>
+  <p class="muted" style="font-size:12.5px;margin:0 0 14px">Showing work for <b>${esc(state.user)}</b> — ${esc(state.role)}. Switch user from the menu above to see another person's queue.</p>
+  ${sec("Waiting on you","the next step on each case",taskRows)}
+  ${sec("Your corrective &amp; preventive actions","raised on cases you may not own",capaRows)}`;
+}
+
+/* ---------- CAPA tracker ---------- */
+function vCapa(){
+  const rows=[];
+  DB.cases.forEach(c=>c.capa.forEach((a,i)=>rows.push({c,a,i})));
+  const open = rows.filter(r=>r.a.status!=="Completed");
+  const overdue = open.filter(r=>new Date(r.a.target)<NOW);
+  rows.sort((x,y)=> new Date(x.a.target)-new Date(y.a.target));
+  const byOwner = [...new Set(rows.map(r=>r.a.owner))].map(o=>({label:o, value:rows.filter(r=>r.a.owner===o&&r.a.status!=="Completed").length})).filter(x=>x.value).sort((a,b)=>b.value-a.value);
+  return `
+  <div class="kpis" style="margin-bottom:16px">
+    <div class="kpi"><span class="v">${rows.length}</span><span class="l">Total actions raised</span></div>
+    <div class="kpi"><span class="v">${open.length}</span><span class="l">Open / in progress</span></div>
+    <div class="kpi ${overdue.length?"alert":""}"><span class="v">${overdue.length}</span><span class="l">Past target date</span></div>
+    <div class="kpi"><span class="v">${rows.filter(r=>r.a.effectiveness).length}</span><span class="l">Effectiveness verified</span></div>
+  </div>
+  <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(300px,1fr));margin-bottom:16px">
+    <div class="card"><div class="panelhead"><h3>Open actions by owner</h3></div>${barList(byOwner)}</div>
+    <div class="card"><div class="panelhead"><h3>Action mix</h3></div>${barList([
+      {label:"Corrective (CA)", value:rows.filter(r=>r.a.kind==="CA").length},
+      {label:"Preventive (PA)", value:rows.filter(r=>r.a.kind==="PA").length, color:"var(--info)"}])}</div>
+  </div>
+  <div class="card"><div class="tablewrap" style="border:none">
+    <table><thead><tr><th>Case</th><th>Type</th><th>Action</th><th>Owner</th><th>Target</th><th>Status</th></tr></thead><tbody>
+    ${rows.map(r=>{
+      const od = r.a.status!=="Completed" && new Date(r.a.target)<NOW;
+      return '<tr class="clickable" data-case="'+r.c.id+'"><td><span class="mono" style="color:var(--copper)">'+r.c.id+'</span><div class="muted" style="font-size:11px">'+esc(r.c.product.brand)+'</div></td>'+
+      '<td><span class="pill '+(r.a.kind==="CA"?"p-info":"p-new")+'">'+r.a.kind+'</span></td>'+
+      '<td style="max-width:360px">'+esc(r.a.action)+'</td><td>'+esc(r.a.owner)+'</td>'+
+      '<td class="mono">'+fmtD(r.a.target)+(od?' <span class="pill p-crit">Overdue</span>':'')+'</td>'+
+      '<td><span class="pill '+(r.a.status==="Completed"?"p-ok":r.a.status==="In Progress"?"p-warn":"p-mute")+'">'+r.a.status+'</span></td></tr>';
+    }).join("")}
+    </tbody></table></div></div>`;
+}
+
+/* ---------- reports ---------- */
+const REPORTS = {
+  overview:{t:"Complaint overview", cols:["Reference","Type","Registered","Brand","Category","Severity","Status","Owner","Age","SLA"],
+    rows:()=>DB.cases.map(c=>[c.id,c.type,fmtD(c.createdAt),c.product.brand,c.category,c.severity,c.status,c.assignee||"—",ageLabel(c),slaState(c).label])},
+  brand:{t:"Brand / SKU-wise analysis", cols:["Brand","SKU","Pack","Complaints","Critical","Open","Closed"],
+    rows:()=>BRANDS.flatMap(b=>b.variants.map(v=>{ const l=DB.cases.filter(c=>c.type==="Complaint"&&c.product.sku===v.sku);
+      return [b.name,v.sku,v.pack,l.length,l.filter(c=>c.severity==="Critical").length,l.filter(c=>!["Closed","Rejected"].includes(c.status)).length,l.filter(c=>c.status==="Closed").length]; }))},
+  category:{t:"Category &amp; severity analysis", cols:["Category","Owning dept.","Total","Critical","Major","Minor","Open"],
+    rows:()=>CATEGORIES.map(k=>{ const l=DB.cases.filter(c=>c.category===k.name);
+      return [k.name,k.dept,l.length,l.filter(c=>c.severity==="Critical").length,l.filter(c=>c.severity==="Major").length,l.filter(c=>c.severity==="Minor").length,l.filter(c=>!["Closed","Rejected"].includes(c.status)).length]; })},
+  batch:{t:"Batch / plant-wise traceability", cols:["Bottling unit","Batch / lot","Brand","Cases","Highest severity","Open"],
+    rows:()=>{ const m={}; DB.cases.filter(c=>c.type==="Complaint").forEach(c=>{ const k=c.trace.plant+"|"+c.trace.batch; (m[k]=m[k]||[]).push(c); });
+      return Object.entries(m).map(([k,l])=>{ const [p,b]=k.split("|"); const order={Critical:3,Major:2,Minor:1};
+        return [p,b,l[0].product.brand,l.length,l.reduce((h,c)=>order[c.severity]>order[h]?c.severity:h,"Minor"),l.filter(c=>!["Closed","Rejected"].includes(c.status)).length]; }).sort((a,b)=>b[3]-a[3]); }},
+  sla:{t:"SLA performance &amp; ageing", cols:["Severity","Response SLA (h)","Resolution SLA (h)","Cases","Closed within SLA","Breached","Compliance"],
+    rows:()=>SEVERITIES.map(s=>{ const l=DB.cases.filter(c=>c.type==="Complaint"&&c.severity===s.name);
+      const cl=l.filter(c=>c.status==="Closed"); const met=cl.filter(c=>slaState(c).label==="Met").length;
+      const br=l.filter(c=>slaState(c).tone==="p-crit").length;
+      return [s.name,s.respHrs,s.resHrs,l.length,met,br,cl.length?Math.round(met/cl.length*100)+"%":"—"]; })},
+  repeat:{t:"Repeats &amp; recurrence", cols:["Brand / SKU","Category","Cases","Batches affected","Latest","Prior RCA cause","Recurred after PA"],
+    rows:()=>{ const m={};
+      DB.cases.filter(c=>c.type==="Complaint"&&!c.duplicateOf).forEach(c=>{ const k=c.product.sku+"|"+c.category; (m[k]=m[k]||[]).push(c); });
+      return Object.entries(m).filter(([,l])=>l.length>1).map(([k,l])=>{ const [sku,cat]=k.split("|");
+        const batches=[...new Set(l.map(c=>c.trace.batch))];
+        const latest=l.slice().sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt))[0];
+        const causes=[...new Set(l.filter(c=>c.rca).map(c=>c.rca.cause))];
+        const fail=l.some(c=>capaFailure(c));
+        return [l[0].product.brand+" · "+sku, cat, l.length, batches.length, fmtD(latest.createdAt), causes.join(", ")||"—", fail?"Yes":"No"]; })
+        .sort((a,b)=>b[2]-a[2]); }},
+  duplicate:{t:"Duplicate links", cols:["Duplicate","Parent case","Brand / SKU","Category","Batch","Logged"],
+    rows:()=>DB.cases.filter(c=>c.duplicateOf).map(c=>[c.id, c.duplicateOf, c.product.brand+" · "+c.product.sku, c.category, c.trace.batch, fmtD(c.createdAt)])},
+  rca:{t:"Root cause trend", cols:["Cause group","Cases","Actions raised","Completed","Open"],
+    rows:()=>["Process","Equipment","Material","External"].map(k=>{ const l=DB.cases.filter(c=>c.rca&&c.rca.cause===k);
+      const a=l.flatMap(c=>c.capa); return [k,l.length,a.length,a.filter(x=>x.status==="Completed").length,a.filter(x=>x.status!=="Completed").length]; })}
+};
+function vReports(){
+  const r = REPORTS[state.reportKind];
+  const rows = r.rows();
+  return `
+  <div class="tabbar">${Object.entries(REPORTS).map(([k,v])=>'<button class="tab" data-report="'+k+'" aria-selected="'+(state.reportKind===k)+'">'+v.t+'</button>').join("")}</div>
+  <div class="row" style="margin-bottom:12px">
+    <span class="muted" style="font-size:12.5px">${rows.length} row${rows.length===1?"":"s"} · generated ${fmtD(NOW)}</span>
+    <span class="spacer"></span>
+    <button class="btn sm" id="copycsv">Copy as CSV</button>
+    <button class="btn sm" id="printrep">Print / save as PDF</button>
+  </div>
+  <div class="card"><div class="tablewrap" style="border:none">
+    <table><thead><tr>${r.cols.map(c=>'<th>'+c+'</th>').join("")}</tr></thead>
+    <tbody>${rows.map(row=>'<tr>'+row.map((cell,i)=>'<td'+(typeof cell==="number"||i===0?' class="'+(typeof cell==="number"?"mono":"")+'"':"")+'>'+esc(cell)+'</td>').join("")+'</tr>').join("")}</tbody></table>
+  </div></div>
+  <p class="muted" style="font-size:12px;margin-top:12px">Excel and PDF export are delivered through the server-side report service in the deployed build; this prototype offers clipboard CSV and browser print instead.</p>`;
+}
+
+/* ---------- audit ---------- */
+function vAudit(){
+  const rows = DB.audit.slice(0,300);
+  return `<div class="row" style="margin-bottom:12px"><span class="muted" style="font-size:12.5px">Most recent ${rows.length} entries across all cases</span></div>
+  <div class="card"><div class="tablewrap" style="border:none"><table>
+  <thead><tr><th>Timestamp</th><th>Reference</th><th>Action</th><th>Detail</th><th>User</th></tr></thead>
+  <tbody>${rows.map(a=>'<tr class="clickable" data-case="'+a.ref+'"><td class="mono" style="white-space:nowrap">'+fmtDT(a.at)+'</td><td class="mono" style="color:var(--copper)">'+a.ref+'</td><td>'+esc(a.action)+'</td><td class="muted" style="max-width:380px">'+esc(a.detail)+'</td><td>'+esc(a.by)+'</td></tr>').join("")}</tbody>
+  </table></div></div>`;
+}
+
+/* ---------- admin ---------- */
+function vAdmin(){
+  const tabs=[["categories","Complaint categories"],["severity","Severity & SLA"],["products","Brands & SKUs"],["org","Plants & departments"],["users","Users & roles"],["templates","Notification templates"]];
+  return `<div class="adminsplit">
+    <div class="sidelist">${tabs.map(t=>'<button data-atab="'+t[0]+'" aria-current="'+(state.adminTab===t[0])+'">'+t[1]+'</button>').join("")}</div>
+    <div>${adminBody()}</div></div>`;
+}
+function adminBody(){
+  const ro = !can("admin");
+  const guard = ro ? '<div class="denied" style="margin-bottom:12px">Signed in as '+esc(state.role)+' — master data is read-only. Switch to System Administrator to edit.</div>' : '';
+  if(state.adminTab==="categories") return guard+`<div class="card"><div class="tablewrap" style="border:none"><table>
+    <thead><tr><th>Category</th><th>Default owning department</th><th>Default severity</th><th>Cases</th></tr></thead><tbody>
+    ${CATEGORIES.map(c=>'<tr><td>'+esc(c.name)+'</td><td>'+esc(c.dept)+'</td><td><span class="sev sev-'+c.defSev+'"><i></i>'+c.defSev+'</span></td><td class="mono">'+DB.cases.filter(x=>x.category===c.name).length+'</td></tr>').join("")}
+    </tbody></table></div></div>
+    ${ro?"":`<div class="card pad" style="margin-top:14px"><h4 style="font-size:13px;margin-bottom:10px">Add category</h4>
+      <div class="grid" style="grid-template-columns:2fr 1.4fr 1fr auto;align-items:end">
+        <div class="field"><label>Name</label><input id="ncName" placeholder="e.g. Neck seal shrink defect"></div>
+        <div class="field"><label>Department</label><select id="ncDept">${DEPTS.map(d=>'<option>'+d+'</option>').join("")}</select></div>
+        <div class="field"><label>Severity</label><select id="ncSev">${SEVERITIES.map(s=>'<option>'+s.name+'</option>').join("")}</select></div>
+        <button class="btn primary" id="addcat">Add</button></div></div>`}`;
+  if(state.adminTab==="severity") return guard+`<div class="card"><div class="tablewrap" style="border:none"><table>
+    <thead><tr><th>Severity</th><th>Response SLA (h)</th><th>Resolution SLA (h)</th><th>Handling rule</th></tr></thead><tbody>
+    ${SEVERITIES.map((s,i)=>'<tr><td><span class="sev sev-'+s.name+'"><i></i>'+s.name+'</span></td>'+
+      '<td>'+(ro?'<span class="mono">'+s.respHrs+'</span>':'<input class="mono" style="width:74px;border:1px solid var(--line);border-radius:5px;padding:4px 6px" type="number" data-sla="resp" data-i="'+i+'" value="'+s.respHrs+'">')+'</td>'+
+      '<td>'+(ro?'<span class="mono">'+s.resHrs+'</span>':'<input class="mono" style="width:74px;border:1px solid var(--line);border-radius:5px;padding:4px 6px" type="number" data-sla="res" data-i="'+i+'" value="'+s.resHrs+'">')+'</td>'+
+      '<td class="muted" style="max-width:420px">'+esc(s.note)+'</td></tr>').join("")}
+    </tbody></table></div></div><p class="muted" style="font-size:12px;margin-top:10px">SLA clocks run on working hours in the deployed build; this prototype uses elapsed hours.</p>`;
+  if(state.adminTab==="products") return guard+`<div class="card"><div class="tablewrap" style="border:none"><table>
+    <thead><tr><th>Brand</th><th>Category</th><th>Variant</th><th>SKU</th><th>Pack</th><th>Cases</th></tr></thead><tbody>
+    ${BRANDS.flatMap(b=>b.variants.map(v=>'<tr><td>'+esc(b.name)+'</td><td class="muted">'+esc(b.cat)+'</td><td>'+esc(v.v)+'</td><td class="mono">'+esc(v.sku)+'</td><td>'+esc(v.pack)+'</td><td class="mono">'+DB.cases.filter(c=>c.product.sku===v.sku).length+'</td></tr>')).join("")}
+    </tbody></table></div></div><p class="muted" style="font-size:12px;margin-top:10px">Product master synchronises from the ERP through the agreed REST interface or periodic import; batch and manufacturing data resolve on lookup.</p>`;
+  if(state.adminTab==="org") return guard+`<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))">
+    <div class="card"><div class="panelhead"><h3>Bottling units</h3></div><div class="tablewrap" style="border:none"><table><thead><tr><th>Unit</th><th>Cases</th></tr></thead><tbody>
+    ${PLANTS.map(p=>'<tr><td>'+esc(p)+'</td><td class="mono">'+DB.cases.filter(c=>c.trace.plant===p).length+'</td></tr>').join("")}</tbody></table></div></div>
+    <div class="card"><div class="panelhead"><h3>Departments</h3></div><div class="tablewrap" style="border:none"><table><thead><tr><th>Department</th><th>Users</th><th>Open cases</th></tr></thead><tbody>
+    ${DEPTS.map(d=>'<tr><td>'+esc(d)+'</td><td class="mono">'+USERS.filter(u=>u.dept===d).length+'</td><td class="mono">'+openCases().filter(c=>c.department===d).length+'</td></tr>').join("")}</tbody></table></div></div></div>`;
+  if(state.adminTab==="users") return guard+`<div class="card"><div class="tablewrap" style="border:none"><table>
+    <thead><tr><th>User</th><th>Role</th><th>Department</th><th>Permissions</th><th>Status</th></tr></thead><tbody>
+    ${USERS.map(u=>'<tr><td>'+esc(u.name)+'</td><td>'+esc(u.role)+'</td><td class="muted">'+esc(u.dept)+'</td><td class="muted" style="font-size:11.5px;max-width:300px">'+((ROLES[u.role]||[]).join(", ")||"read-only")+'</td><td><span class="pill '+(u.active?"p-ok":"p-mute")+'">'+(u.active?"Active":"Disabled")+'</span></td></tr>').join("")}
+    </tbody></table></div></div>`;
+  return guard+`<div class="grid">${TEMPLATES.map((t,i)=>`<div class="card pad">
+    <div class="row" style="margin-bottom:8px"><span class="pill p-info">${t.key}</span><b style="font-size:13.5px">${esc(t.subject)}</b></div>
+    <div class="field"><textarea data-tpl="${i}" ${ro?"readonly":""} style="min-height:96px;font-size:12.5px">${esc(t.body)}</textarea></div>
+    <div class="muted" style="font-size:11.5px;margin-top:6px">Merge fields: {{ref}} {{customer}} {{severity}} {{category}} {{assignee}} {{due}} {{batch}} {{plant}} {{resolution}}</div>
+  </div>`).join("")}</div>`;
+}
+
+/* ---------- customer portal ---------- */
+function skuMeta(sku){
+  for(const b of BRANDS) for(const v of b.variants) if(v.sku===sku) return {brand:b, v};
+  return {brand:BRANDS[0], v:BRANDS[0].variants[0]};
+}
+function vPortal(){
+  const m = skuMeta(state.portal.sku);
+  return `<div class="portal">
+    <div class="phone"><div class="screen">
+      <div class="statusbar"><span>09:41</span><span>▮▮▮ 5G ▮</span></div>
+      <div class="pbar"><div class="m">A</div><div><b>Audree Consumer Care</b><small>Powered by Audree Infotech</small></div></div>
+      <div class="pbody" id="pbody">${portalBody(m)}</div>
+      ${portalFoot()}
+    </div></div>
+    <div class="grid" style="gap:16px">
+      <div class="card pad">
+        <span class="eyebrow">Entry point</span>
+        <h3 style="font-size:16px;margin:6px 0 10px">Active QR on the bottle</h3>
+        <div class="qrpanel">
+          <div>
+            <div class="qr" id="qrbox" role="button" tabindex="0" title="Simulate scanning this QR" style="${baseIsReachable()?"":"opacity:.35;filter:grayscale(1)"}">${qrSvg(m.v.sku, batchFor(m))}</div>
+            <div class="scanhint">${baseIsReachable()?"tap to simulate a scan":"not scannable yet"}</div>
+          </div>
+          <div style="flex:1;min-width:190px">
+            ${baseIsReachable()?"":'<div class="denied" style="margin-bottom:10px"><b>This page is open from a local file or a Claude sign-in page — a phone cannot reach it.</b> Upload <span class="mono">audree-complaint-portal.html</span> to a public web server (Netlify, IIS, GitHub Pages) and paste its https:// address below. The QR turns live as soon as you do.</div>'}
+            <p class="muted" style="margin:0 0 10px;font-size:12.5px;line-height:1.55">A real, scannable code. It carries the SKU and batch, so the form opens already knowing which product the consumer is holding. Scan it with a phone, or tap it to simulate the scan here.</p>
+            <div class="skulist">${BRANDS.flatMap(b=>b.variants.map(v=>'<button class="skubtn" data-sku="'+v.sku+'" aria-pressed="'+(state.portal.sku===v.sku)+'">'+esc(b.name)+' '+esc(v.pack)+'</button>')).join("")}</div>
+            <div class="row" style="margin-top:12px;gap:8px">
+              <button class="btn primary sm" id="simscan">Simulate scan → raise complaint</button>
+            </div>
+            <div class="field" style="margin-top:12px"><label for="baseurl">Portal address encoded in the QR</label>
+              <input id="baseurl" class="mono" style="font-size:11.5px" value="${esc(portalBase())}" placeholder="https://care.yourdistillery.in/">
+              <span class="hint">Defaults to the hosted Audree portal, which any phone can open without signing in. To move it to your own domain later, paste the new address here — the QR redraws as you type.</span></div>
+            <div class="mono muted" style="font-size:11px;margin-top:8px;overflow-wrap:anywhere">${esc(deepLink(m.v.sku, batchFor(m)))}</div>
+          </div>
+        </div>
+      </div>
+      <div class="card pad">
+        <span class="eyebrow">Channels in scope</span>
+        <h3 style="font-size:16px;margin:6px 0 10px">One form, four ways in</h3>
+        <dl class="kv" style="grid-template-columns:150px 1fr">
+          <dt>Active QR</dt><dd>Bottle or pack code, opens with product context pre-filled.</dd>
+          <dt>Web portal</dt><dd>Consumer care page on the corporate site.</dd>
+          <dt>Direct link</dt><dd>Shared by the care desk over email for follow-ups.</dd>
+          <dt>Customer care</dt><dd>Executive raises the case on the consumer's behalf from the internal console.</dd>
+        </dl>
+        <div class="stagenote" style="margin-top:12px;border-top:1px solid var(--line-2);padding-top:10px">Mobile-responsive web / PWA — no native app install. Excluded from Phase-1 scope: WhatsApp Business, SMS gateway, native Android/iOS apps.</div>
+      </div>
+      <div class="card pad">
+        <span class="eyebrow">Track without signing in</span>
+        <h3 style="font-size:16px;margin:6px 0 10px">Status lookup</h3>
+        <div class="grid" style="grid-template-columns:1fr 1fr auto;align-items:end;gap:10px">
+          <div class="field"><label>Reference number</label><input id="trackRef" placeholder="CMP-2026-0004" value="${esc(state.portal.trackRef)}"></div>
+          <div class="field"><label>Registered mobile</label><input id="trackMob" placeholder="last 4 digits" value="${esc(state.portal.trackMob)}"></div>
+          <button class="btn primary" id="doTrack">Track</button>
+        </div>
+        ${trackResult()}
+      </div>
+    </div>
+  </div>`;
+}
+function batchFor(m){ const c = DB.cases.find(c=>c.product.sku===m.v.sku); return c?c.trace.batch:(m.v.sku.split("-")[0]+"/AUR/26/0700"); }
+
+function confirmUI(r, wide){
+  if(r.status!=="Resolved") return '';
+  if(r.customerResponse) return '<div class="cresp '+(r.customerResponse.status==="Confirmed"?"ok":"no")+'">'+
+    (r.customerResponse.status==="Confirmed"?"✓ You confirmed this outcome on ":"You told us this is not resolved — ")+fmtD(r.customerResponse.at)+
+    (r.customerResponse.status==="Disputed"?". Our quality team has re-opened the case.":". Thank you.")+'</div>';
+  return '<div class="confirmbox"><div class="ch">Does this resolve your complaint?</div>'+
+    '<textarea id="crComment" placeholder="Anything you would like to add (optional)"></textarea>'+
+    '<div class="crow"><button class="btn primary sm" data-cresp="'+r.id+'|Confirmed">Yes, this resolves it</button>'+
+    '<button class="btn sm" data-cresp="'+r.id+'|Disputed">No, still a problem</button></div></div>';
+}
+function customerRespond(id, status){
+  const c=DB.cases.find(x=>x.id===id); if(!c) return;
+  const el=$("#crComment"); const comment=el?el.value.trim():"";
+  c.customerResponse={status, at:iso(NOW), comment};
+  const e={at:iso(NOW), by:c.customer.name+" (consumer)", action:status==="Confirmed"?"Customer confirmed outcome":"Customer disputed outcome", detail:comment};
+  c.audit.push(e); DB.audit.unshift(Object.assign({ref:c.id}, e));
+  if(status==="Disputed"){ c.status="Under Investigation"; c.resolution=null; c.escalated=true;
+    const e2={at:iso(NOW), by:"System", action:"Re-opened", detail:"Consumer disputed the outcome; case escalated"};
+    c.audit.push(e2); DB.audit.unshift(Object.assign({ref:c.id}, e2)); }
+  save(); render();
+  toast(status==="Confirmed"?"Thank you — your confirmation is recorded.":"We have re-opened your case.");
+}
+
+function trackResult(){
+  let r = state.portal.trackResult;
+  if(r) r = DB.cases.find(x=>x.id===r.id) || r;
+  if(r===undefined) return "";
+  if(r===null) return '<div class="denied" style="margin-top:12px">No case found for that reference and mobile combination. Check the reference in your acknowledgement email.</div>';
+  const si = STATUS_FLOW.indexOf(r.status);
+  return '<div style="margin-top:14px;border-top:1px solid var(--line-2);padding-top:12px">'+
+    '<div class="row" style="margin-bottom:10px"><span class="mono" style="color:var(--copper);font-weight:500">'+r.id+'</span><span class="pill '+STATUS_TONE[r.status]+'">'+r.status+'</span><span class="muted" style="font-size:12px">'+esc(r.product.brand)+' · registered '+fmtD(r.createdAt)+'</span></div>'+
+    '<div class="timeline">'+["Received","Under review","Investigation","Resolved","Closed"].map((s,i)=>{
+      const map=[0,1,2,5,6][i]; const cls = si>map?"done":si>=map?"now":"";
+      return '<div class="tl '+cls+'"><div class="mk">'+(si>map?"✓":i+1)+'</div><div><div class="t">'+s+'</div></div></div>';
+    }).join("")+'</div>'+
+    (r.resolution?'<div class="note" style="margin-top:10px"><div class="h"><b>Outcome</b></div><div class="b">'+esc(r.resolution.text)+'</div></div>':'')+
+    confirmUI(r,true)+'</div>';
+}
+function portalBody(m){
+  const p = state.portal, d=p.data, e=p.errors;
+  const F=(k,label,attrs,type)=>`<div class="pfield"><label for="f_${k}">${label}</label>${type==="textarea"?`<textarea id="f_${k}" ${attrs||""}>${esc(d[k]||"")}</textarea>`:`<input id="f_${k}" ${attrs||""} value="${esc(d[k]||"")}">`}${e[k]?'<div class="err">'+esc(e[k])+'</div>':''}</div>`;
+
+  if(p.step==="choice") return `
+    <div class="pctx"><span class="eyebrow">Scanned product</span><div class="b">${esc(m.brand.name)} ${esc(m.v.v)}</div>
+      <div class="mono" style="font-size:11.5px;color:var(--ink-2);margin-top:3px">${esc(m.v.sku)} · ${esc(m.v.pack)} · batch ${esc(state.portal.scanBatch||batchFor(m))}</div></div>
+    <div class="pchoice">
+      <button class="bigbtn" data-pstep="complaint"><span class="ic">⚑</span><span><b>Raise a complaint</b><small>Something is wrong with the product — particles, fill level, seal, taste, label or packaging.</small></span></button>
+      <button class="bigbtn" data-pstep="feedback"><span class="ic">✎</span><span><b>Give feedback</b><small>Share a suggestion or tell us what you liked. No case is opened.</small></span></button>
+      <button class="bigbtn" data-pstep="track"><span class="ic">◷</span><span><b>Track an existing complaint</b><small>Enter your reference number and registered mobile.</small></span></button>
+    </div>
+    <p class="muted" style="font-size:11px;line-height:1.5;margin-top:14px">Your details are used only to investigate and respond to this case. Consumption of alcohol is injurious to health. Not for sale to persons below the legal drinking age.</p>`;
+
+  if(p.step==="complaint" || p.step==="feedback"){
+    const isC = p.step==="complaint";
+    return `
+    <div class="steps"><i class="on"></i><i class="${p.page>=2?"on":""}"></i><i class="${p.page>=3?"on":""}"></i></div>
+    ${p.page===1?`
+      <h3 style="font-size:16px;margin-bottom:3px">About you</h3>
+      <p class="muted" style="font-size:12px;margin:0 0 14px">So we can send your reference number and reply.</p>
+      ${F("name","Full name *")}
+      ${F("mobile","Mobile number *",'inputmode="numeric" maxlength="10" placeholder="10 digits"')}
+      ${F("email","Email address *",'type="email" placeholder="you@example.com"')}
+      <div class="row" style="gap:8px">
+        <div style="flex:1">${F("city","City *")}</div>
+        <div style="width:96px">${F("pin","PIN *",'inputmode="numeric" maxlength="6"')}</div>
+      </div>
+      ${F("stateName","State *")}
+    `:p.page===2?`
+      <h3 style="font-size:16px;margin-bottom:3px">The product</h3>
+      <p class="muted" style="font-size:12px;margin:0 0 14px">Pre-filled from the QR — correct anything that looks wrong.</p>
+      <div class="pfield"><label>Brand &amp; pack</label><input value="${esc(m.brand.name)} ${esc(m.v.v)} · ${esc(m.v.pack)}" readonly></div>
+      ${F("batch","Batch / lot number *",'placeholder="Printed on the shoulder"')}
+      ${F("purchaseDate","Date of purchase",'type="date"')}
+      ${F("outlet","Shop / outlet name")}
+      ${isC?`<div class="pfield"><label for="f_category">What is the issue? *</label>
+        <select id="f_category">${CATEGORIES.map(c=>'<option'+(d.category===c.name?" selected":"")+'>'+esc(c.name)+'</option>').join("")}</select>${e.category?'<div class="err">'+esc(e.category)+'</div>':''}</div>`
+       :`<div class="pfield"><label>How would you rate the product?</label><div class="stars" id="stars">${[1,2,3,4,5].map(n=>'<button data-star="'+n+'" class="'+((d.rating||0)>=n?"on":"")+'" aria-label="'+n+' stars">★</button>').join("")}</div></div>`}
+    `:`
+      <h3 style="font-size:16px;margin-bottom:3px">${isC?"Tell us what happened":"Your feedback"}</h3>
+      <p class="muted" style="font-size:12px;margin:0 0 14px">${isC?"Describe what you saw. Photos help us trace the batch faster.":"Anything you would like us to know."}</p>
+      ${F("description",isC?"Description *":"Your message *","placeholder=\"Be as specific as you can.\"","textarea")}
+      ${isC?`<div class="pfield"><label>Photos, video or invoice</label>
+        <input type="file" id="f_files" multiple accept="image/*,video/*,.pdf">
+        <div class="muted" style="font-size:11px;margin-top:4px">Up to 5 files, 5 MB each.</div>
+        ${p.evidence.length?'<div class="evidence" style="margin-top:9px">'+p.evidence.map((f,i)=>'<div class="ev">'+(f.dataUrl&&f.kind==="image"?'<img src="'+f.dataUrl+'" alt="">':'<div class="ph">▤</div>')+'<div class="nm">'+esc(f.name)+'</div></div>').join("")+'</div>':''}
+      </div>`:''}
+      <label class="row" style="gap:8px;font-size:12px;align-items:flex-start;margin-top:6px">
+        <input type="checkbox" id="f_consent" ${d.consent?"checked":""} style="margin-top:2px">
+        <span>I confirm I am of legal drinking age and consent to ${esc(COMPANY)} contacting me about this ${isC?"complaint":"feedback"}.</span></label>
+      ${e.consent?'<div class="err">'+esc(e.consent)+'</div>':''}
+    `}`;
+  }
+
+  if(p.step==="track") return `
+    <h3 style="font-size:16px;margin-bottom:3px">Track your complaint</h3>
+    <p class="muted" style="font-size:12px;margin:0 0 14px">Use the reference from your acknowledgement email.</p>
+    <div class="pfield"><label for="f_tref">Reference number</label><input id="f_tref" placeholder="CMP-2026-0004" value="${esc(d.tref||"")}"></div>
+    <div class="pfield"><label for="f_tmob">Registered mobile (last 4 digits)</label><input id="f_tmob" inputmode="numeric" maxlength="4" value="${esc(d.tmob||"")}"></div>
+    ${p.trackInline===null?'<div class="err">No matching case. Check the reference and mobile.</div>':''}
+    ${p.trackInline? (()=>{ const r=DB.cases.find(x=>x.id===p.trackInline.id)||p.trackInline, si=STATUS_FLOW.indexOf(r.status);
+      return '<div class="pcard"><div class="mono" style="color:var(--copper);font-weight:500">'+r.id+'</div>'+
+      '<div class="row" style="margin:6px 0 10px"><span class="pill '+STATUS_TONE[r.status]+'">'+r.status+'</span><span class="muted" style="font-size:11.5px">'+esc(r.product.brand)+'</span></div>'+
+      '<div class="timeline">'+["Received","Under review","Investigation","Resolved","Closed"].map((s,i)=>{const map=[0,1,2,5,6][i];const cls=si>map?"done":si>=map?"now":"";
+        return '<div class="tl '+cls+'"><div class="mk">'+(si>map?"✓":i+1)+'</div><div><div class="t" style="font-size:12.5px">'+s+'</div></div></div>';}).join("")+'</div>'+
+      (r.resolution?'<div style="font-size:12.5px;margin-top:8px;border-top:1px solid var(--line-2);padding-top:8px"><b>Outcome</b><br>'+esc(r.resolution.text)+'</div>':'')+confirmUI(r)+'</div>'; })() : ''}`;
+
+  if(p.step==="done"){
+    const c = DB.cases.find(x=>x.id===p.ref);
+    return `<div class="ack">
+      <div class="tick">✓</div>
+      <h3 style="font-size:17px">${c && c.type==="Feedback" ? "Thank you for the feedback" : "Complaint registered"}</h3>
+      <p class="muted" style="font-size:12.5px;margin:6px 0 0">Your reference number is</p>
+      <div class="ref">${esc(p.ref)}</div>
+      <p class="muted" style="font-size:12.5px;line-height:1.55;margin:0 0 16px">An acknowledgement has been emailed to ${esc(c?c.customer.email:"you")}. ${c&&c.type==="Complaint"?"Our quality team will respond within "+sevOf(c.severity).respHrs+" working hours.":"We read every message."}</p>
+      <div class="pcard" style="text-align:left"><div class="eyebrow">What happens next</div>
+        <ol style="margin:8px 0 0;padding-left:18px;font-size:12.5px;line-height:1.7;color:var(--ink-2)">
+          <li>Customer Care reviews and classifies your case</li>
+          <li>Quality Assurance traces the batch and investigates</li>
+          <li>You receive the outcome and confirm closure</li></ol></div>
+    </div>`;
+  }
+  return "";
+}
+function portalFoot(){
+  const p=state.portal;
+  if(p.step==="choice") return "";
+  if(p.step==="done") return '<div class="pfoot"><button class="btn'+(state.consumer?" primary":"")+'" data-pnav="restart">Done</button>'+(state.consumer?'':'<button class="btn primary" data-pnav="viewcase">Open in console →</button>')+'</div>';
+  if(p.step==="track") return '<div class="pfoot"><button class="btn" data-pnav="back">Back</button><button class="btn primary" data-pnav="dotrack">Check status</button></div>';
+  return '<div class="pfoot"><button class="btn" data-pnav="back">Back</button><button class="btn primary" data-pnav="next">'+(p.page===3?"Submit":"Continue")+'</button></div>';
+}
+
+/* ============================ RENDER ============================ */
+function render(){
+  if(state.consumer){ renderConsumer(); return; }
+  renderRail(); renderTop();
+  const v = {tasks:vTasks,dashboard:vDashboard,queue:vQueue,case:vCase,capa:vCapa,reports:vReports,audit:vAudit,admin:vAdmin,portal:vPortal}[state.view] || vDashboard;
+  $("#view").innerHTML = v();
+  window.scrollTo({top:0});
+}
+
+function renderConsumer(){
+  document.body.classList.add("consumer");
+  const m = skuMeta(state.portal.sku);
+  let root = $("#consumer");
+  if(!root){ root=document.createElement("div"); root.id="consumer"; document.body.appendChild(root); }
+  root.innerHTML =
+    '<div class="cpage">'+
+      '<div class="pbar"><div class="m">A</div><div><b>Audree Consumer Care</b><small>Powered by Audree Infotech</small></div></div>'+
+      '<div class="pbody" id="pbody">'+portalBody(m)+'</div>'+
+      portalFoot()+
+    '</div>'+
+    '<div class="cfoot">Audree Infotech · Customer Complaint &amp; Feedback Management</div>';
+  window.scrollTo({top:0});
+}
+
+/* ============================ EVENTS ============================ */
+function go(view){ state.view=view; render(); }
+function openCase(id){ state.caseId=id; state.caseTab="summary"; state.view="case"; render(); }
+
+document.addEventListener("click", ev => {
+  const t = ev.target.closest("[data-nav],[data-case],[data-qtab],[data-ctab],[data-atab],[data-report],[data-pstep],[data-pnav],[data-sku],[data-star],[data-advance],[data-verify],[data-cresp],[data-task],[data-tool],[data-userc],button");
+  if(!t) return;
+
+  if(t.dataset.nav){ go(t.dataset.nav); return; }
+  if(t.dataset.case){ ev.preventDefault(); openCase(t.dataset.case); return; }
+  if(t.dataset.task){ const [id,tab]=t.dataset.task.split("|"); state.caseId=id; state.caseTab=tab; state.view="case"; render(); return; }
+  if(t.dataset.qtab){ state.queueTab=t.dataset.qtab; render(); return; }
+  if(t.dataset.ctab){ state.caseTab=t.dataset.ctab; render(); return; }
+  if(t.dataset.atab){ state.adminTab=t.dataset.atab; render(); return; }
+  if(t.dataset.report){ state.reportKind=t.dataset.report; render(); return; }
+  if(t.dataset.sku){ state.portal.sku=t.dataset.sku; render(); return; }
+  if(t.dataset.cresp){ const [id,st]=t.dataset.cresp.split("|"); customerRespond(id,st); return; }
+  if(t.dataset.tool){ state.invTool=t.dataset.tool; render(); return; }
+  if(t.dataset.userc!=null){ const cc=DB.cases.find(x=>x.id===state.caseId); const n=cc&&cc.investigation[+t.dataset.userc]; if(n){ state.rcaPrefill=(n.data&&(n.data.conclusion||n.data.likely))||n.text; state.caseTab="capa"; render(); toast("Copied into the root-cause field — review and save."); } return; }
+
+  const id=t.id;
+  if(id==="themebtn"){ const r=document.documentElement; const cur=r.getAttribute("data-theme");
+    const dark = cur ? cur==="dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+    r.setAttribute("data-theme", dark?"light":"dark"); return; }
+  if(id==="resetbtn"){ seed(); state.caseId=null; state.view="dashboard"; render(); toast("Demo data restored."); return; }
+  if(id==="clearf"){ state.q="";state.fSev="";state.fStatus="";state.fBrand="";state.fDept="";state.fTool=""; render(); return; }
+  if(id==="copycsv"){ copyCsv(); return; }
+  if(id==="printrep"){ window.print(); return; }
+  if(id==="addcat"){ addCategory(); return; }
+  if(id==="doTrack"){ doTrackPanel(); return; }
+  if(id==="qrbox"||id==="simscan"){ const m=skuMeta(state.portal.sku); scan(m.v.sku, batchFor(m), id==="simscan"); return; }
+
+  /* portal */
+  if(t.dataset.pstep){ startPortalStep(t.dataset.pstep); return; }
+  if(t.dataset.star){ state.portal.data.rating = +t.dataset.star; render(); return; }
+  if(t.dataset.pnav){ portalNav(t.dataset.pnav); return; }
+  if(t.dataset.advance!=null){ advanceCapa(+t.dataset.advance); return; }
+  if(t.dataset.verify!=null){ verifyCapa(+t.dataset.verify); return; }
+
+  /* case actions */
+  const c = DB.cases.find(x=>x.id===state.caseId);
+  if(!c) return;
+  const A={ doTriage:()=>doTriage(c), doDup:()=>doDup(c), doAssign:()=>doAssign(c), toRCA:()=>moveStatus(c,"RCA & CAPA","Investigation complete"),
+    addinv:()=>addInv(c), saverca:()=>saveRca(c), rcaApprove:()=>reviewRca(c,true), rcaReturn:()=>reviewRca(c,false), addcapa:()=>addCapa(c), toApproval:()=>moveStatus(c,"Pending Approval","Submitted for QA Manager approval"),
+    doResolve:()=>doResolve(c), doReturn:()=>moveStatus(c,"RCA & CAPA","Returned to QA for rework"), doClose:()=>doClose(c),
+    reopen:()=>{ c.status="Under Investigation"; c.resolution=null; log(c,"Re-opened","Consumer disputed the outcome"); commit("Case re-opened for further investigation."); },
+    doEsc:()=>{ c.escalated=!c.escalated; log(c, c.escalated?"Escalated":"Escalation withdrawn",""); if(c.escalated) mail(c,"ESCALATE"); commit(c.escalated?"Case escalated.":"Escalation withdrawn."); },
+    doHold:()=>{ c.hold=!c.hold; log(c, c.hold?"Batch placed on hold":"Batch hold released", c.trace.batch); commit(c.hold?"Batch "+c.trace.batch+" placed on hold.":"Batch hold released."); } };
+  if(A[id]) A[id]();
+});
+
+document.addEventListener("change", ev => {
+  const t=ev.target;
+  if(t.id==="baseurl"){ render(); return; }
+  if(t.id==="aDept"){ state.assignDept=t.value; render(); return; }
+  if(t.id==="rolepick"){ const u=USERS.find(u=>u.name===t.value); state.user=u.name; state.role=u.role; render(); return; }
+  if(t.id==="fSev"){state.fSev=t.value;render();return;}
+  if(t.id==="fStatus"){state.fStatus=t.value;render();return;}
+  if(t.id==="fBrand"){state.fBrand=t.value;render();return;}
+  if(t.id==="fDept"){state.fDept=t.value;render();return;}
+  if(t.id==="fTool"){state.fTool=t.value;render();return;}
+  if(t.dataset.sla!=null){ const s=SEVERITIES[+t.dataset.i]; if(t.dataset.sla==="resp")s.respHrs=+t.value; else s.resHrs=+t.value; toast("SLA updated for "+s.name+"."); render(); return; }
+  if(t.dataset.tpl!=null){ TEMPLATES[+t.dataset.tpl].body=t.value; toast("Template saved."); return; }
+  if(t.id==="f_files"){ readFiles(t.files); return; }
+  if(t.id==="invfiles"){ readInvFiles(t.files); return; }
+});
+document.addEventListener("input", ev => {
+  const t=ev.target;
+  if(t.id==="q"){ state.q=t.value; const p=t.selectionStart; render(); const n=$("#q"); if(n){n.focus(); n.setSelectionRange(p,p);} }
+  if(t.id==="baseurl"){ state.portal.baseUrl=t.value.trim(); try{localStorage.setItem(LS_KEY+"_base",state.portal.baseUrl);}catch(e){}
+    const m=skuMeta(state.portal.sku), box=$("#qrbox"); if(box){ box.innerHTML=qrSvg(m.v.sku,batchFor(m)); const l=box.parentElement.parentElement.querySelector(".mono.muted"); if(l) l.textContent=deepLink(m.v.sku,batchFor(m)); } return; }
+  if(t.id==="trackRef") state.portal.trackRef=t.value;
+  if(t.id==="trackMob") state.portal.trackMob=t.value;
+  if(t.id&&t.id.startsWith("f_")) { const k=t.id.slice(2); if(k!=="files") state.portal.data[k] = t.type==="checkbox"?t.checked:t.value; }
+});
+
+/* ---------- actions ---------- */
+function commit(msg){ save(); render(); if(msg) toast(msg); }
+function moveStatus(c, s, detail){ c.status=s; log(c,"Status → "+s, detail||""); commit("Moved to "+s+"."); }
+
+function doTriage(c){
+  c.type=$("#tType").value; c.category=$("#tCat").value; c.severity=$("#tSev").value;
+  c.priority = c.severity==="Critical"?"P1":c.severity==="Major"?"P2":"P3";
+  c.department = catOf(c.category)?.dept || null;
+  c.status="Classified";
+  log(c,"Classified",c.category+" / "+c.severity+" ("+c.type+")");
+  commit("Case classified as "+c.severity+".");
+}
+function doDup(c){
+  const parent=$("#dupOf")?$("#dupOf").value:null;
+  if(!parent) return toast("No parent case to link to.");
+  c.duplicateOf=parent; c.status="Duplicate";
+  log(c,"Marked duplicate","Linked to "+parent);
+  const par=DB.cases.find(x=>x.id===parent);
+  if(par) log(par,"Duplicate linked", c.id+" recorded as a duplicate of this case");
+  commit("Linked as a duplicate of "+parent+".");
+}
+function doAssign(c){
+  c.department=$("#aDept").value;
+  c.assignee=$("#aUser").value.split(" — ")[0];
+  if(!USERS.some(u=>u.name===c.assignee&&canInvestigate(u))) return toast("Pick a user who can investigate.");
+  state.assignDept=null;
+  c.status="Under Investigation";
+  log(c,"Assigned","Routed to "+c.department+" — "+c.assignee);
+  mail(c,"ASSIGN");
+  commit("Assigned to "+c.assignee+" — investigation started.");
+}
+function addInv(c){
+  const tool = state.invTool || "note";
+  const g = id => { const el=$("#"+id); return el ? el.value.trim() : ""; };
+  let data={}, text="";
+  if(tool==="note"){ text=g("inv_text"); if(!text) return toast("Enter your findings first."); }
+  if(tool==="5why"){
+    data.problem=g("inv_problem"); data.whys=[1,2,3,4,5].map(i=>g("inv_why"+i)).filter(Boolean); data.conclusion=g("inv_conclusion");
+    if(!data.problem||data.whys.length<2) return toast("State the problem and at least two Whys.");
+    text=data.conclusion||data.whys[data.whys.length-1];
+  }
+  if(tool==="6m"){
+    data.m={}; SIX_M.forEach(m=>{ const v=g("inv_m_"+m.k); if(v) data.m[m.k]=v; }); data.likely=g("inv_likely");
+    if(!Object.keys(data.m).length) return toast("Fill in at least one cause category.");
+    text=data.likely||"Fishbone analysis recorded.";
+  }
+  if(tool==="isnot"){
+    data.rows={}; IS_NOT.forEach(r=>{ data.rows[r.k]={is:g("inv_is_"+r.k), not:g("inv_not_"+r.k)}; });
+    if(!Object.values(data.rows).some(r=>r.is||r.not)) return toast("Fill in at least one row.");
+    data.observation=g("inv_obs"); text=data.observation||"Is / Is-Not analysis recorded.";
+  }
+  if(tool==="gemba"){
+    data.location=g("inv_loc"); data.observed=g("inv_observed"); data.records=g("inv_records"); data.deviation=g("inv_dev");
+    if(!data.observed) return toast("Record what was observed.");
+    text=data.deviation||data.observed;
+  }
+  const entry={at:iso(NOW), by:state.user, tool, text, data, attachments:(state.invFiles||[]).slice()};
+  c.investigation.push(entry);
+  log(c, INV_TOOLS[tool].name+" recorded", text.slice(0,70)+(text.length>70?"…":""));
+  state.invFiles=[];
+  commit(INV_TOOLS[tool].name+" recorded.");
+}
+function reviewRca(c, ok){
+  const comment=($("#rcareview")?$("#rcareview").value.trim():"");
+  c.rca.review={status:ok?"Reviewed":"Returned", by:state.user, at:iso(NOW), comment};
+  log(c, ok?"RCA reviewed":"RCA returned for rework", comment);
+  commit(ok?"RCA marked as reviewed.":"RCA returned to the investigator.");
+}
+function saveRca(c){
+  const v=$("#rcatext").value.trim(); if(!v) return toast("Describe the root cause first.");
+  c.rca={rootCause:v, cause:$("#rcacause").value, at:iso(NOW), by:state.user, review:null};
+  state.rcaPrefill="";
+  log(c,"RCA recorded", c.rca.cause+" cause documented");
+  if(c.status==="Under Investigation") c.status="RCA & CAPA";
+  commit("Root cause saved.");
+}
+function addCapa(c){
+  const v=$("#capatext").value.trim(); if(!v) return toast("Describe the action first.");
+  const kind=$("#capakind").value;
+  c.capa.push({kind, action:v, owner:$("#capaowner").value, target:new Date($("#capatarget").value).toISOString(), status:"Open", effectiveness:null});
+  log(c, kind==="CA"?"Corrective action raised":"Preventive action raised", v.slice(0,70)+(v.length>70?"…":""));
+  if(c.status==="Under Investigation") c.status="RCA & CAPA";
+  commit(kind+" raised.");
+}
+function advanceCapa(i){
+  const c=DB.cases.find(x=>x.id===state.caseId); if(!c) return;
+  const a=c.capa[i];
+  if(a.status==="Open"){ a.status="In Progress"; log(c,"Action started", a.action.slice(0,60)); commit("Action in progress."); }
+  else { a.status="Completed"; a.effectiveness=null; log(c,"Action completed", a.action.slice(0,60)); commit("Action completed — awaiting effectiveness check."); }
+}
+function verifyCapa(i){
+  const c=DB.cases.find(x=>x.id===state.caseId); if(!c) return;
+  const a=c.capa[i];
+  a.effectiveness="Verified by "+state.user+" on "+fmtD(iso(NOW));
+  log(c,"Effectiveness verified", a.action.slice(0,60));
+  commit("Effectiveness verified.");
+}
+function doResolve(c){
+  const v=$("#resText").value.trim(); if(!v) return toast("Write the customer-facing resolution.");
+  c.resolution={text:v, at:iso(NOW), by:state.user, approvedBy:state.user};
+  c.status="Resolved"; log(c,"Resolved","Resolution approved");
+  commit("Case resolved.");
+}
+function doClose(c){
+  c.closure={at:iso(NOW), by:state.user, customerConfirmed:$("#custConf").checked};
+  c.status="Closed"; log(c,"Closed", c.closure.customerConfirmed?"Customer confirmation received":"Closed without customer confirmation");
+  mail(c,"CLOSURE");
+  const dups=duplicatesOf(c.id).filter(x=>x.status!=="Closed");
+  dups.forEach(x=>{ x.resolution=x.resolution||Object.assign({},c.resolution); x.closure={at:iso(NOW), by:state.user, customerConfirmed:false};
+    x.status="Closed"; log(x,"Closed with parent","Outcome inherited from "+c.id); mail(x,"CLOSURE"); });
+  commit(dups.length? "Case closed, plus "+dups.length+" linked duplicate"+(dups.length>1?"s":"")+"." : "Case closed.");
+}
+function addCategory(){
+  const n=$("#ncName").value.trim(); if(!n) return toast("Enter a category name.");
+  CATEGORIES.push({name:n, dept:$("#ncDept").value, defSev:$("#ncSev").value});
+  render(); toast("Category added.");
+}
+function copyCsv(){
+  const r=REPORTS[state.reportKind];
+  const q=s=>'"'+String(s).replace(/"/g,'""')+'"';
+  const csv=[r.cols.map(q).join(","), ...r.rows().map(row=>row.map(q).join(","))].join("\n");
+  navigator.clipboard.writeText(csv).then(()=>toast("CSV copied to clipboard.")).catch(()=>toast("Clipboard unavailable in this view."));
+}
+function doTrackPanel(){
+  const ref=(state.portal.trackRef||"").trim().toUpperCase();
+  const mob=(state.portal.trackMob||"").trim();
+  const c=DB.cases.find(x=>x.id===ref && (!mob || x.customer.mobile.endsWith(mob)));
+  state.portal.trackResult = c||null; render();
+}
+
+/* ---------- portal flow ---------- */
+function startPortalStep(s){
+  const m=skuMeta(state.portal.sku);
+  state.portal = Object.assign(state.portal, {step:s, page:1,
+    data:{consent:false, category:CATEGORIES[0].name, rating:0, batch:state.portal.scanBatch||batchFor(m)},
+    errors:{}, evidence:[], trackInline:undefined});
+  render();
+}
+function scan(sku, batch, straightToForm){
+  const known = BRANDS.some(b=>b.variants.some(v=>v.sku===sku));
+  if(known) state.portal.sku=sku;
+  state.portal.scanBatch = batch||null;
+  state.view="portal";
+  if(!inFrame){ state.consumer=true; state.portal.step="choice"; render(); return; }   // phone scan → consumer-only page
+  if(straightToForm) startPortalStep("complaint");
+  else { state.portal.step="choice"; render(); }
+  const m=skuMeta(state.portal.sku);
+  toast("QR scanned — "+m.brand.name+" "+m.v.pack+(batch?" · batch "+batch:"")+" loaded.");
+  const ph=document.querySelector(".phone"); if(ph&&ph.scrollIntoView) ph.scrollIntoView({block:"nearest"});
+}
+function handleHash(){
+  const h=location.hash.replace(/^#/,""); if(!h) return false;
+  const p=new URLSearchParams(h); const sku=p.get("sku"); if(!sku) return false;
+  scan(sku, p.get("b")||null, false);
+  return true;
+}
+window.addEventListener("hashchange", handleHash);
+function readInvFiles(files){
+  const list=[...files].slice(0,5); let pending=list.length; if(!pending) return;
+  state.invFiles=[];
+  list.forEach(f=>{ const rec={name:f.name, kind:f.type.startsWith("image")?"image":"doc", dataUrl:null}; state.invFiles.push(rec);
+    if(f.type.startsWith("image")&&f.size<5e6){ const r=new FileReader(); r.onload=()=>{rec.dataUrl=r.result; if(--pending===0) render();}; r.onerror=()=>{ if(--pending===0) render(); }; r.readAsDataURL(f); }
+    else if(--pending===0) render(); });
+}
+function readFiles(files){
+  const list=[...files].slice(0,5);
+  let pending=list.length; if(!pending) return;
+  state.portal.evidence=[];
+  list.forEach(f=>{
+    const rec={name:f.name, kind:f.type.startsWith("image")?"image":"doc", dataUrl:null};
+    state.portal.evidence.push(rec);
+    if(f.type.startsWith("image") && f.size < 5e6){
+      const r=new FileReader(); r.onload=()=>{ rec.dataUrl=r.result; if(--pending===0) render(); }; r.onerror=()=>{ if(--pending===0) render(); }; r.readAsDataURL(f);
+    } else if(--pending===0) render();
+  });
+  if(pending===list.length) render();
+}
+function portalNav(a){
+  const p=state.portal;
+  if(a==="back"){
+    if(p.step==="track"){ p.step="choice"; }
+    else if(p.page>1) p.page--; else p.step="choice";
+    p.errors={}; render(); return;
+  }
+  if(a==="restart"){ state.portal={step:"choice",type:null,data:{},errors:{},evidence:[],ref:null,trackRef:"",trackMob:"",trackResult:undefined,sku:p.sku}; render(); return; }
+  if(a==="viewcase"){ openCase(p.ref); return; }
+  if(a==="dotrack"){
+    const ref=(p.data.tref||"").trim().toUpperCase(), mob=(p.data.tmob||"").trim();
+    p.trackInline = DB.cases.find(x=>x.id===ref && (!mob || x.customer.mobile.endsWith(mob))) || null;
+    render(); return;
+  }
+  if(a==="next"){
+    const e=validate(); p.errors=e;
+    if(Object.keys(e).length){ render(); toast("Please correct the highlighted fields."); return; }
+    if(p.page<3){ p.page++; render(); return; }
+    submitPortal();
+  }
+}
+function validate(){
+  const p=state.portal, d=p.data, e={};
+  if(p.page===1){
+    if(!(d.name||"").trim()) e.name="Please enter your name.";
+    if(!/^\d{10}$/.test((d.mobile||"").trim())) e.mobile="Enter a 10-digit mobile number.";
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test((d.email||"").trim())) e.email="Enter a valid email address.";
+    if(!(d.city||"").trim()) e.city="Required.";
+    if(!/^\d{6}$/.test((d.pin||"").trim())) e.pin="6 digits.";
+    if(!(d.stateName||"").trim()) e.stateName="Please enter your state.";
+  }
+  if(p.page===2){
+    if(p.step==="complaint" && !(d.batch||"").trim()) e.batch="Batch number is printed on the bottle shoulder.";
+  }
+  if(p.page===3){
+    if(!(d.description||"").trim()) e.description=p.step==="complaint"?"Please tell us what happened.":"Please enter your message.";
+    if(!d.consent) e.consent="Please confirm to continue.";
+  }
+  return e;
+}
+function submitPortal(){
+  const p=state.portal, d=p.data, m=skuMeta(p.sku);
+  const isC = p.step==="complaint";
+  const cat = isC ? (d.category||CATEGORIES[0].name) : "Outer carton damage in transit";
+  const sev = isC ? (catOf(cat)?.defSev || "Minor") : "Minor";
+  const id = nextId(isC?"Complaint":"Feedback");
+  const c = {
+    id, type:isC?"Complaint":"Feedback", createdAt:iso(NOW), channel:"Active QR",
+    customer:{name:d.name, mobile:d.mobile, email:d.email, city:d.city, state:d.stateName, pin:d.pin},
+    product:{brand:m.brand.name, cat:m.brand.cat, variant:m.v.v, sku:m.v.sku, pack:m.v.pack},
+    trace:{batch:(d.batch||batchFor(m)).toUpperCase(), mfgDate:iso(addH(NOW,-24*70)), plant:PLANTS[0]},
+    purchase:{date:d.purchaseDate?new Date(d.purchaseDate).toISOString():iso(addH(NOW,-24*3)), outlet:d.outlet||"—", location:(d.city||"")+", "+(d.stateName||""), invoice:"—"},
+    category:cat, severity:sev, priority:sev==="Critical"?"P1":sev==="Major"?"P2":"P3",
+    description:d.description, rating:isC?null:(d.rating||null),
+    evidence:p.evidence.slice(), status:"New", department:null, assignee:null,
+    investigation:[], rca:null, capa:[], resolution:null, closure:null,
+    escalated:false, hold:false, outbox:[], audit:[], duplicateOf:null
+  };
+  DB.cases.unshift(c);
+  const e={at:iso(NOW), by:"Customer portal", action:"Registered", detail:c.type+" received via Active QR ("+c.product.sku+")"};
+  c.audit.push(e); DB.audit.unshift(Object.assign({ref:c.id}, e));
+  mail(c,"ACK");
+  p.ref=id; p.step="done"; save(); render();
+}
+
+document.addEventListener("keydown", ev => {
+  if(ev.target.id==="qrbox" && (ev.key==="Enter"||ev.key===" ")){ ev.preventDefault(); ev.target.click(); }
+});
+
+/* ============================ BOOT ============================ */
+if(!load()) seed(); else { let m=false; DB.cases.forEach(c=>{ if(c.status==="Triaged"){c.status="Classified";m=true;} if(c.status==="Assigned"){c.status="Under Investigation";m=true;} c.audit.forEach(a=>{ if(a.action==="Triaged"){a.action="Classified";m=true;} }); }); DB.audit.forEach(a=>{ if(a.action==="Triaged") a.action="Classified"; }); if(m) save(); }
+state.portal.page=1;
+try{ state.portal.baseUrl = localStorage.getItem(LS_KEY+"_base") || ""; }catch(e){}
+if(!handleHash()) render();
+</script>
+
+</body>
+</html>

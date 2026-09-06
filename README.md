@@ -8,11 +8,12 @@ Customer Complaint &amp; Feedback Management System — working Phase-1 prototyp
 |---|---|
 | `index.html` | The application. Self-contained: open it in a browser, or serve the folder as a static site. |
 | `flow.html` | Flow reference document — stages, owners, gate conditions, roles, SLAs. |
-| `src-artifact.html` | Same app as a body fragment, for publishing into a host page. Not standalone. |
 
 ## Running it
 
-Open `index.html` in any modern browser, or host the folder on any static web server (IIS, Netlify, GitHub Pages, Render).
+Live: **https://jayaraman-sathish.github.io/Customer-complaint/**
+
+Or open `index.html` in any modern browser, or host the folder on any static web server (IIS, Netlify, GitHub Pages, Render).
 
 A phone that scans the in-app QR needs a public `https://` address — set it in the app under **Customer Portal → Portal address encoded in the QR**.
 

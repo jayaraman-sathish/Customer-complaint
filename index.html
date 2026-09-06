@@ -965,7 +965,7 @@ function donut(items){
     '<text x="64" y="77" text-anchor="middle" fill="var(--ink-3)" font-family="IBM Plex Sans" font-size="10">cases</text></svg>'+
     '<div class="legend">'+items.map(i=>'<div><i style="background:'+i.color+'"></i>'+esc(i.label)+'<span class="n">'+i.value+'</span></div>').join("")+'</div></div>';
 }
-const HOSTED_PORTAL = "https://audree-complaint-portal.onrender.com/";
+const HOSTED_PORTAL = "https://jayaraman-sathish.github.io/Customer-complaint/";
 function portalBase(){
   if(state.portal.baseUrl) return state.portal.baseUrl;
   let u=""; try{ u=window.top.location.href; }catch(e){}
@@ -1623,7 +1623,7 @@ function vPortal(){
             </div>
             <div class="field" style="margin-top:12px"><label for="baseurl">Portal address encoded in the QR</label>
               <input id="baseurl" class="mono" style="font-size:11.5px" value="${esc(portalBase())}" placeholder="https://care.yourdistillery.in/">
-              <span class="hint">Defaults to the hosted Audree portal, which any phone can open without signing in. To move it to your own domain later, paste the new address here — the QR redraws as you type.</span></div>
+              <span class="hint">Defaults to the published GitHub Pages site, which any phone can open without signing in. To move it to your own domain later, paste the new address here — the QR redraws as you type.</span></div>
             <div class="mono muted" style="font-size:11px;margin-top:8px;overflow-wrap:anywhere">${esc(deepLink(m.v.sku, batchFor(m)))}</div>
           </div>
         </div>
